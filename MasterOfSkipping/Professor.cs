@@ -1,31 +1,53 @@
 public class Professor
 {
+    Subject A;
+    Subject B;
+    RuleType Rule;
 
 private static readonly Random _random = new Random();
 
     public Subject Subject { get;  }
 
-    public Professor(string name, Subject subject)
+    public Professor(Subject subject, RuleType rule, Subject a = default, Subject b = default)
+{
+    Subject = subject;
+    Rule = rule;
+    A = a;
+    B = b;
+}
+
+public bool WillAsk(bool[] yesterdayAsked)
+{
+    switch (Rule)
     {
-        Subject = subject;
+        case RuleType.Random50:
+            return Random50();
+        case RuleType.YesterdayA:
+            return YesterdayA(yesterdayAsked, A);
+        case RuleType.XorRule:
+            return XorRule(yesterdayAsked, A, B);
+        default:
+            throw new InvalidOperationException();
     }
+}
 
-
-    bool Random50()
+    private bool Random50()
     {
         return _random.Next(0, 2) == 1;
     }
 
-    bool YesterdayA(Subject subjectA)
+    private bool YesterdayA(bool[] yesterdayAsked,Subject subjectA)
     {
-
+        return yesterdayAsked[(int)A];
     }
 
-    bool XorRule(Subject subjectA, Subject subjectB)
+    private bool XorRule(bool[] yesterdayAsked, Subject subjectA, Subject subjectB)
     {
-
+        return yesterdayAsked[(int)A] ^ yesterdayAsked[(int)B];
     }
 }
+
+ 
 
 // У каждого преподавателя — одно из трёх правил:
 
