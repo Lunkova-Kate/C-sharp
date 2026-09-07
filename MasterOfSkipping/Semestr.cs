@@ -5,9 +5,9 @@ public class Semestr
     History history;
     Professor[] professors;
     ISkipStrategy strategy;
-    private int smallPie = 1;
+    private const int smallPie = 1;
 
-    public Semestr(Professor[] professors, ISkipStrategy[] strategies)
+    public Semestr(Professor[] professors, ISkipStrategy strategies)
     {
         this.professors = professors;
         this.strategy = strategy;
@@ -20,6 +20,16 @@ public class Semestr
         history = new History();
     }
 
+    public int Run()
+    {
+        for( int day = 0; day< 100; ++day)
+        {
+           if (!ProcessDay(day))
+            return 0; 
+        
+    }
+        return enjoyment;
+    }
  bool ProcessDay(int dayNumber)
     {
         bool[] attend = strategy.DecideDay(dayNumber, history);
@@ -46,7 +56,7 @@ public class Semestr
                 if (willAsk)
                 {
                     enjoyment = 0;
-                    history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                    // history.RecordVisit(dayNumber, (Subject)i, willAsk);
                     return false;
                 }
                 else
