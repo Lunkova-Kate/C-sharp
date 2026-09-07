@@ -7,7 +7,7 @@ public class Semestr
     ISkipStrategy strategy;
     private const int smallPie = 1;
 
-    public Semestr(Professor[] professors, ISkipStrategy strategies)
+    public Semestr(Professor[] professors, ISkipStrategy strategy)
     {
         this.professors = professors;
         this.strategy = strategy;
