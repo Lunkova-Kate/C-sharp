@@ -1,7 +1,6 @@
 public class Semestr
 {
     int enjoyment;
-    int day;
     bool[] yesterdayAsked = new bool[6];
     History history;
     Professor[] professors;
@@ -11,9 +10,9 @@ public class Semestr
     public Semestr(Professor[] professors, ISkipStrategy[] strategies)
     {
         this.professors = professors;
-        this.strategy = strategies;
+        this.strategy = strategy;
+        
         enjoyment = 0;
-        day = 0;
         for(int i = 0; i < yesterdayAsked.Length; ++i)
         {
             yesterdayAsked[i] = false;
@@ -37,11 +36,10 @@ public class Semestr
                 {
                     history.RecordVisit(dayNumber, (Subject)i, willAsk);
                 }
-                // else
-                // {
-                //     enjoyment -= 1;
-                //     history.RecordVisit(dayNumber, (Subject)i, willAsk);
-                // }
+                else
+                {
+                    history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                }
             }
             else
             {
@@ -61,7 +59,7 @@ public class Semestr
         }
             enjoyment += smallPie; 
             yesterdayAsked = todayAsked;
+            return true;
     }
  
-    // public int day {get; set;}
 }
