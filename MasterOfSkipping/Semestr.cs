@@ -1,5 +1,6 @@
 
 namespace MasterOfSkipping;
+
 public class Semestr
 {
     int enjoyment;
@@ -13,9 +14,9 @@ public class Semestr
     {
         this.professors = professors;
         this.strategy = strategy;
-        
+
         enjoyment = 0;
-        for(int i = 0; i < yesterdayAsked.Length; ++i)
+        for (int i = 0; i < yesterdayAsked.Length; ++i)
         {
             yesterdayAsked[i] = false;
         }
@@ -24,38 +25,37 @@ public class Semestr
 
     public int Run()
     {
-        for( int day = 0; day< 100; ++day)
+        for (int day = 0; day < 100; ++day)
         {
-           if (!ProcessDay(day))
-            return 0; 
-        
-    }
+            if (!ProcessDay(day))
+                return 0;
+
+        }
         return enjoyment;
     }
- bool ProcessDay(int dayNumber)
+    bool ProcessDay(int dayNumber)
     {
         bool[] attend = strategy.DecideDay(dayNumber, history);
         bool[] todayAsked = new bool[6];
-        
-        for(int i = 0 ; i<todayAsked.Length; ++i)
+
+        for (int i = 0; i < todayAsked.Length; ++i)
         {
-            
-             bool willAsk = professors[i].WillAsk(yesterdayAsked);
-             todayAsked[i] = willAsk;
+
+            bool willAsk = professors[i].WillAsk(yesterdayAsked);
+            todayAsked[i] = willAsk;
             if (attend[i])
             {
-                if (willAsk)
-                {
-                    history.RecordVisit(dayNumber, (Subject)i, willAsk);
-                }
-                
+
+                history.RecordVisit(dayNumber, (Subject)i, willAsk);
+
+
             }
             else
             {
                 if (willAsk)
                 {
                     enjoyment = 0;
-                     history.RecordSkip(dayNumber, (Subject)i);
+                    history.RecordSkip(dayNumber, (Subject)i);
                     return false;
                 }
                 else
@@ -64,11 +64,11 @@ public class Semestr
                     history.RecordSkip(dayNumber, (Subject)i);
                 }
             }
-           
+
         }
-            enjoyment += smallPie; 
-            yesterdayAsked = todayAsked;
-            return true;
+        enjoyment += smallPie;
+        yesterdayAsked = todayAsked;
+        return true;
     }
- 
+
 }
