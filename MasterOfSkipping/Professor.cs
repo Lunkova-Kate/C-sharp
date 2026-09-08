@@ -1,3 +1,4 @@
+namespace MasterOfSkipping;
 public class Professor
 {
     Subject A;
@@ -38,11 +39,11 @@ public bool WillAsk(bool[] yesterdayAsked)
 
     private bool YesterdayA(bool[] yesterdayAsked,Subject subjectA)
     {
-        return yesterdayAsked[(int)A];
+        return yesterdayAsked[(int)subjectA];
     }
 
     private bool XorRule(bool[] yesterdayAsked, Subject subjectA, Subject subjectB)
     {
-        return yesterdayAsked[(int)A] ^ yesterdayAsked[(int)B];
+        return yesterdayAsked[(int)subjectA] ^ yesterdayAsked[(int)subjectB];
     }
 }

@@ -1,5 +1,5 @@
 using System;
-
+namespace MasterOfSkipping;
 public class History : IReadOnlyStudentHistory
 {
     private const int TotalDays = 100;

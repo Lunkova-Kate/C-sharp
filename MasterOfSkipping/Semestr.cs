@@ -1,3 +1,5 @@
+
+namespace MasterOfSkipping;
 public class Semestr
 {
     int enjoyment;
@@ -46,22 +48,19 @@ public class Semestr
                 {
                     history.RecordVisit(dayNumber, (Subject)i, willAsk);
                 }
-                else
-                {
-                    history.RecordVisit(dayNumber, (Subject)i, willAsk);
-                }
+                
             }
             else
             {
                 if (willAsk)
                 {
                     enjoyment = 0;
-                    // history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                     history.RecordSkip(dayNumber, (Subject)i);
                     return false;
                 }
                 else
                 {
-                    enjoyment += 1;
+                    ++enjoyment;
                     history.RecordSkip(dayNumber, (Subject)i);
                 }
             }

@@ -1,3 +1,4 @@
+namespace MasterOfSkipping;
 public class AlwaysAttendStrategy : ISkipStrategy
 {
     public string Name => "Always attend";

@@ -1,7 +1,6 @@
 using System;
 
-namespace MasterOfSkipping
-{
+namespace MasterOfSkipping;
     public static class ProfessorGenerator
     {
         public static Professor[] Generate()
@@ -41,4 +40,3 @@ namespace MasterOfSkipping
             return professors;
         }
     }
-}

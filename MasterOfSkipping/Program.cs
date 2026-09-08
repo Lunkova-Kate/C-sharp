@@ -1,7 +1,6 @@
 ﻿using System;
 
-namespace MasterOfSkipping
-{
+namespace MasterOfSkipping;
     class Program
     {
         static void Main(string[] args)
@@ -23,4 +22,3 @@ namespace MasterOfSkipping
 
 
     }
-}

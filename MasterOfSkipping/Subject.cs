@@ -1,3 +1,4 @@
+namespace MasterOfSkipping;
 public enum Subject
 {
     Calculus,

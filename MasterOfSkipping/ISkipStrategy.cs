@@ -1,3 +1,4 @@
+namespace MasterOfSkipping;
 public interface ISkipStrategy
 {
    string Name { get; }
