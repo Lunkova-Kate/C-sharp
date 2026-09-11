@@ -1,7 +1,8 @@
 namespace MasterOfSkipping;
-public enum RuleType 
+
+public enum RuleType
 {
     Random50,
-    YesterdayA, 
-    XorRule 
- }
+    YesterdayA,
+    XorRule
+}

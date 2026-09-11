@@ -1,7 +1,8 @@
 namespace MasterOfSkipping;
+
 public interface ISkipStrategy
 {
-   string Name { get; }
+    string Name { get; }
 
     /// <summary>
     /// Решение на день: для каждого предмета — идти на пару (true) или прогулять (false).

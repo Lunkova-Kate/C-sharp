@@ -4,55 +4,55 @@ namespace MasterOfSkipping;
 
 public static class ProfessorGenerator
 {
-public static Professor[] Generate(Random random)
-{
-
-    var professors = new Professor[6];
-
-    for (int i = 0; i < professors.Length; i++)
+    public static Professor[] Generate(Random random)
     {
-        Subject subject = (Subject)i;
-        RuleType ruleType = (RuleType)random.Next(3);
 
-        switch (ruleType)
+        var professors = new Professor[6];
+
+        for (int i = 0; i < professors.Length; i++)
         {
-            case RuleType.Random50:
-                professors[i] = new Professor(
-                    subject,
-                    ruleType,
-                    random);
-                break;
+            Subject subject = (Subject)i;
+            RuleType ruleType = (RuleType)random.Next(3);
 
-            case RuleType.YesterdayA:
-                Subject a = (Subject)random.Next(6);
+            switch (ruleType)
+            {
+                case RuleType.Random50:
+                    professors[i] = new Professor(
+                        subject,
+                        ruleType,
+                        random);
+                    break;
 
-                professors[i] = new Professor(
-                    subject,
-                    ruleType,
-                    random,
-                    a);
-                break;
+                case RuleType.YesterdayA:
+                    Subject a = (Subject)random.Next(6);
 
-            case RuleType.XorRule:
-                Subject first = (Subject)random.Next(6);
-                Subject second;
+                    professors[i] = new Professor(
+                        subject,
+                        ruleType,
+                        random,
+                        a);
+                    break;
 
-                do
-                {
-                    second = (Subject)random.Next(6);
-                }
-                while (first == second);
+                case RuleType.XorRule:
+                    Subject first = (Subject)random.Next(6);
+                    Subject second;
 
-                professors[i] = new Professor(
-                    subject,
-                    ruleType,
-                    random,
-                    first,
-                    second);
-                break;
+                    do
+                    {
+                        second = (Subject)random.Next(6);
+                    }
+                    while (first == second);
+
+                    professors[i] = new Professor(
+                        subject,
+                        ruleType,
+                        random,
+                        first,
+                        second);
+                    break;
+            }
         }
-    }
 
-    return professors;
-}
+        return professors;
+    }
 }
