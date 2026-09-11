@@ -6,9 +6,17 @@ class Program
 {
     static void Main(string[] args)
     {
-        int seed = args.Length > 0 && int.TryParse(args[0], out int value)
-    ? value
-    : Random.Shared.Next();
+        int seed;
+        if (args.Length > 0 && int.TryParse(args[0], out int value))
+        {
+            seed = value;
+        }
+        else
+        {
+            seed = Random.Shared.Next();
+            Console.WriteLine("Seed not provided or invalid. Using random seed.");
+        }
+
         Console.WriteLine($"Seed: {seed}");
         var random = new Random(seed);
         RunMasterOfSkipping(random);

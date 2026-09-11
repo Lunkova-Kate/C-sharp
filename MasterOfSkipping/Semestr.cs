@@ -12,6 +12,19 @@ public class Semestr
 
     public Semestr(Professor[] professors, ISkipStrategy strategy)
     {
+        if (professors is null)
+        {
+            throw new ArgumentNullException(
+                nameof(professors),
+                "Professors cannot be null");
+        }
+        if (strategy is null)
+        {
+            throw new ArgumentNullException(
+                nameof(strategy),
+                "Strategy cannot be null");
+        }
+
         this.professors = professors;
         this.strategy = strategy;
 
@@ -29,13 +42,32 @@ public class Semestr
         {
             if (!ProcessDay(day))
                 return 0;
-
         }
         return enjoyment;
     }
-    bool ProcessDay(int dayNumber)
+    private bool ProcessDay(int dayNumber)
     {
         bool[] attend = strategy.DecideDay(dayNumber, history);
+        if (attend is null)
+        {
+            throw new InvalidOperationException(
+                $"strategy {strategy.Name} returned null array");
+        }
+
+        if (attend.Length != Enum.GetValues<Subject>().Length)
+        {
+            throw new InvalidOperationException(
+                $"Strategy {strategy.Name} returned invalid array of length {attend.Length}");
+        }
+
+        int subjectCount = Enum.GetValues<Subject>().Length;
+
+        if (professors.Length != subjectCount)
+        {
+            throw new ArgumentException(
+                $"Expected {subjectCount} professors, but received {professors.Length}.",
+                nameof(professors));
+        }
         bool[] todayAsked = new bool[6];
 
         for (int i = 0; i < todayAsked.Length; ++i)
@@ -45,10 +77,7 @@ public class Semestr
             todayAsked[i] = willAsk;
             if (attend[i])
             {
-
                 history.RecordVisit(dayNumber, (Subject)i, willAsk);
-
-
             }
             else
             {

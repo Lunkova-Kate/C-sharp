@@ -14,8 +14,13 @@ public class Professor
     {
         Subject = subject;
         this.rule = rule;
+        if (rule == RuleType.XorRule && a == b)
+        {
+            throw new ArgumentException("Subjects must be different for XorRule");
+        }
         this.a = a;
         this.b = b;
+
         this.random = random;
     }
 
@@ -46,6 +51,10 @@ public class Professor
 
     private bool XorRule(bool[] yesterdayAsked, Subject subjectA, Subject subjectB)
     {
+        // if (subjectA == subjectB)
+        // {
+        //     throw new ArgumentException("Subjects must be different for XorRule");
+        // }
         return yesterdayAsked[(int)subjectA] ^ yesterdayAsked[(int)subjectB];
     }
 }
