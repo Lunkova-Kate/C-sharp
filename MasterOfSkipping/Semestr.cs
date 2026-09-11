@@ -16,13 +16,23 @@ public class Semestr
         {
             throw new ArgumentNullException(
                 nameof(professors),
-                "Professors cannot be null");
+                "Professors cannot be null.");
         }
+
+        int subjectCount = Enum.GetValues<Subject>().Length;
+
+        if (professors.Length != subjectCount)
+        {
+            throw new ArgumentException(
+                $"Expected {subjectCount} professors, but received {professors.Length}.",
+                nameof(professors));
+        }
+
         if (strategy is null)
         {
             throw new ArgumentNullException(
                 nameof(strategy),
-                "Strategy cannot be null");
+                "Strategy cannot be null.");
         }
 
         this.professors = professors;
@@ -60,14 +70,7 @@ public class Semestr
                 $"Strategy {strategy.Name} returned invalid array of length {attend.Length}");
         }
 
-        int subjectCount = Enum.GetValues<Subject>().Length;
-
-        if (professors.Length != subjectCount)
-        {
-            throw new ArgumentException(
-                $"Expected {subjectCount} professors, but received {professors.Length}.",
-                nameof(professors));
-        }
+        
         bool[] todayAsked = new bool[6];
 
         for (int i = 0; i < todayAsked.Length; ++i)
