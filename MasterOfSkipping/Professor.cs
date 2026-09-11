@@ -51,10 +51,6 @@ public class Professor
 
     private bool XorRule(bool[] yesterdayAsked, Subject subjectA, Subject subjectB)
     {
-        // if (subjectA == subjectB)
-        // {
-        //     throw new ArgumentException("Subjects must be different for XorRule");
-        // }
         return yesterdayAsked[(int)subjectA] ^ yesterdayAsked[(int)subjectB];
     }
 }
