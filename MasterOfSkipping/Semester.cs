@@ -3,12 +3,11 @@ namespace MasterOfSkipping;
 
 public class Semester
 {
-    int enjoyment;
-    private const int DaysInSemester = SimulationSettings.DaysInSemester;
+    private int _enjoyment;
     bool[] yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
-    History history;
-    Professor[] professors;
-    ISkipStrategy strategy;
+    private History _history;
+    private readonly Professor[] _professors;
+    private readonly ISkipStrategy _strategy;
     private const int smallPie = 1;
 
     public Semester(Professor[] professors, ISkipStrategy strategy)
@@ -36,45 +35,46 @@ public class Semester
                 "Strategy cannot be null.");
         }
 
-        this.professors = professors;
-        this.strategy = strategy;
+        this._professors = professors;
+        this._strategy = strategy;
 
-        enjoyment = 0;
+        _enjoyment = 0;
         for (int i = 0; i < yesterdayAsked.Length; ++i)
         {
             yesterdayAsked[i] = false;
         }
-        history = new History();
+        _history = new History();
     }
 
-    public int Run(out int daysSurvived, out bool expelled)
+    public int Run(out int daysElapsed, out bool expelled)
     {
+        daysElapsed = 0;
         for (int day = 0; day < SimulationSettings.DaysInSemester; ++day)
         {
             if (!ProcessDay(day))
             {
-                daysSurvived = day + 1;
+                daysElapsed = day + 1;
                 expelled = true;
                 return 0;
             }
         }
-        daysSurvived = SimulationSettings.DaysInSemester;
+        daysElapsed = SimulationSettings.DaysInSemester;
         expelled = false;
-        return enjoyment;
+        return _enjoyment;
     }
     private bool ProcessDay(int dayNumber)
     {
-        bool[] attend = strategy.DecideDay(dayNumber, history);
+        bool[] attend = _strategy.DecideDay(dayNumber, _history);
         if (attend is null)
         {
             throw new InvalidOperationException(
-                $"strategy {strategy.Name} returned null array");
+                $"strategy {_strategy.Name} returned null array");
         }
 
         if (attend.Length != Enum.GetValues<Subject>().Length)
         {
             throw new InvalidOperationException(
-                $"Strategy {strategy.Name} returned invalid array of length {attend.Length}");
+                $"Strategy {_strategy.Name} returned invalid array of length {attend.Length}");
         }
 
 
@@ -83,29 +83,29 @@ public class Semester
         for (int i = 0; i < todayAsked.Length; ++i)
         {
 
-            bool willAsk = professors[i].WillAsk(yesterdayAsked);
+            bool willAsk = _professors[i].WillAsk(yesterdayAsked);
             todayAsked[i] = willAsk;
             if (attend[i])
             {
-                history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                _history.RecordVisit(dayNumber, (Subject)i, willAsk);
             }
             else
             {
                 if (willAsk)
                 {
-                    enjoyment = 0;
-                    history.RecordSkip(dayNumber, (Subject)i);
+                    _enjoyment = 0;
+                    _history.RecordSkip(dayNumber, (Subject)i);
                     return false;
                 }
                 else
                 {
-                    ++enjoyment;
-                    history.RecordSkip(dayNumber, (Subject)i);
+                    ++_enjoyment;
+                    _history.RecordSkip(dayNumber, (Subject)i);
                 }
             }
 
         }
-        enjoyment += smallPie;
+        _enjoyment += smallPie;
         yesterdayAsked = todayAsked;
         return true;
     }
