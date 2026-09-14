@@ -1,16 +1,17 @@
 
 namespace MasterOfSkipping;
 
-public class Semestr
+public class Semester
 {
     int enjoyment;
+    private const int DaysInSemester = 100;
     bool[] yesterdayAsked = new bool[6];
     History history;
     Professor[] professors;
     ISkipStrategy strategy;
     private const int smallPie = 1;
-
-    public Semestr(Professor[] professors, ISkipStrategy strategy)
+    
+    public Semester(Professor[] professors, ISkipStrategy strategy)
     {
         if (professors is null)
         {
@@ -46,13 +47,19 @@ public class Semestr
         history = new History();
     }
 
-    public int Run()
+    public int Run(out int daysSurvived, out bool expelled)
     {
         for (int day = 0; day < 100; ++day)
         {
             if (!ProcessDay(day))
+            {
+                daysSurvived = day + 1;
+                expelled = true;
                 return 0;
+            }
         }
+        daysSurvived = 100;
+        expelled = false;
         return enjoyment;
     }
     private bool ProcessDay(int dayNumber)
@@ -70,7 +77,7 @@ public class Semestr
                 $"Strategy {strategy.Name} returned invalid array of length {attend.Length}");
         }
 
-        
+
         bool[] todayAsked = new bool[6];
 
         for (int i = 0; i < todayAsked.Length; ++i)

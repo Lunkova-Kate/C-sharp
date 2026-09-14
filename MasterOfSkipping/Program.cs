@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MasterOfSkipping;
+﻿namespace MasterOfSkipping;
 
 class Program
 {
@@ -27,12 +25,15 @@ class Program
 
         Professor[] professors = ProfessorGenerator.Generate(random);
         ISkipStrategy strategy = new AlwaysAttendStrategy();
-        Semestr simulator = new Semestr(professors, strategy);
+        Semester simulator = new Semester(professors, strategy);
 
-        int totalEnjoyment = simulator.Run();
+        int total = simulator.Run(out int days, out bool expelled);
+        Console.WriteLine(expelled
+            ? $"Expelled on day {days}. Total enjoyment: {total}"
+            : $"Total enjoyment: {total}");
+        Console.WriteLine($"Average per day: {total / (double)days:F2}");
 
-        Console.WriteLine($"Total enjoyment: {totalEnjoyment}");
-        Console.WriteLine($"Average per day: {totalEnjoyment / 100.0:F2}");
+
     }
 
 

@@ -1,4 +1,3 @@
-using System;
 namespace MasterOfSkipping;
 
 public class History : IReadOnlyStudentHistory

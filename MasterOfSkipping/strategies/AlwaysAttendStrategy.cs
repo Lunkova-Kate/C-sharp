@@ -6,6 +6,6 @@ public class AlwaysAttendStrategy : ISkipStrategy
 
     public bool[] DecideDay(int day, IReadOnlyStudentHistory history)
     {
-        return new bool[] { true, true, true, true, true, true };
+        return new bool[] { false, true, true, true, false, true };
     }
 }

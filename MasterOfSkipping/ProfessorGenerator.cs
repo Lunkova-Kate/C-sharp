@@ -1,15 +1,13 @@
-using System;
-
 namespace MasterOfSkipping;
 
 public static class ProfessorGenerator
 {
     public static Professor[] Generate(Random random)
     {
+        int subjectCount = Enum.GetValues<Subject>().Length;
+        var professors = new Professor[subjectCount];
 
-        var professors = new Professor[6];
-
-        for (int i = 0; i < professors.Length; i++)
+        for (int i = 0; i < professors.Length; ++i)
         {
             Subject subject = (Subject)i;
             RuleType ruleType = (RuleType)random.Next(3);
@@ -24,7 +22,7 @@ public static class ProfessorGenerator
                     break;
 
                 case RuleType.YesterdayA:
-                    Subject a = (Subject)random.Next(6);
+                    Subject a = (Subject)random.Next(subjectCount);
 
                     professors[i] = new Professor(
                         subject,
@@ -34,12 +32,12 @@ public static class ProfessorGenerator
                     break;
 
                 case RuleType.XorRule:
-                    Subject first = (Subject)random.Next(6);
+                    Subject first = (Subject)random.Next(subjectCount);
                     Subject second;
 
                     do
                     {
-                        second = (Subject)random.Next(6);
+                        second = (Subject)random.Next(subjectCount);
                     }
                     while (first == second);
 
