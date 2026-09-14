@@ -2,7 +2,7 @@ namespace MasterOfSkipping;
 
 public class History : IReadOnlyStudentHistory
 {
-    private const int TotalDays = 100;
+    private const int TotalDays = SimulationSettings.DaysInSemester;
     private static readonly int TotalSubjects = Enum.GetValues<Subject>().Length;
     private bool[,] _attended = new bool[TotalDays, TotalSubjects];
     private bool?[,] _wasAsked = new bool?[TotalDays, TotalSubjects];

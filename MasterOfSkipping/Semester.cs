@@ -4,13 +4,13 @@ namespace MasterOfSkipping;
 public class Semester
 {
     int enjoyment;
-    private const int DaysInSemester = 100;
-    bool[] yesterdayAsked = new bool[6];
+    private const int DaysInSemester = SimulationSettings.DaysInSemester;
+    bool[] yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
     History history;
     Professor[] professors;
     ISkipStrategy strategy;
     private const int smallPie = 1;
-    
+
     public Semester(Professor[] professors, ISkipStrategy strategy)
     {
         if (professors is null)
@@ -49,7 +49,7 @@ public class Semester
 
     public int Run(out int daysSurvived, out bool expelled)
     {
-        for (int day = 0; day < 100; ++day)
+        for (int day = 0; day < SimulationSettings.DaysInSemester; ++day)
         {
             if (!ProcessDay(day))
             {
@@ -58,7 +58,7 @@ public class Semester
                 return 0;
             }
         }
-        daysSurvived = 100;
+        daysSurvived = SimulationSettings.DaysInSemester;
         expelled = false;
         return enjoyment;
     }
@@ -78,7 +78,7 @@ public class Semester
         }
 
 
-        bool[] todayAsked = new bool[6];
+        bool[] todayAsked = new bool[Enum.GetValues<Subject>().Length];
 
         for (int i = 0; i < todayAsked.Length; ++i)
         {
