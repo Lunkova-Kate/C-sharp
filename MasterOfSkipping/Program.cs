@@ -4,23 +4,30 @@ class Program
 {
     static void Main(string[] args)
     {
-        int seed;
-        if (args.Length > 0 && int.TryParse(args[0], out int value))
+        int count = 0;
+        for (int seed = 1; seed < 10001; ++seed)
         {
-            seed = value;
+            Console.WriteLine($"Seed: {seed}");
+            var random = new Random();
+           int total = RunMasterOfSkipping(random);
+            count += total;
         }
-        else
-        {
-            seed = Random.Shared.Next();
-            Console.WriteLine("Seed not provided or invalid. Using random seed.");
-        }
+        Console.WriteLine($"Average total: {count / (double)10000:F2}");
+        // int seed;
+        // if (args.Length > 0 && int.TryParse(args[0], out int value))
+        // {
+        //     seed = value;
+        // }
+        // else
+        // {
+        //     seed = Random.Shared.Next();
+        //     Console.WriteLine("Seed not provided or invalid. Using random seed.");
+        // }
 
-        Console.WriteLine($"Seed: {seed}");
-        var random = new Random(seed);
-        RunMasterOfSkipping(random);
+
     }
 
-    static void RunMasterOfSkipping(Random random)
+    static int RunMasterOfSkipping(Random random)
     {
 
         Professor[] professors = ProfessorGenerator.Generate(random);
@@ -33,7 +40,7 @@ class Program
             : $"Total enjoyment: {total}");
         Console.WriteLine($"Average per day: {total / (double)days:F2}");
 
-
+        return total;
     }
 
 
