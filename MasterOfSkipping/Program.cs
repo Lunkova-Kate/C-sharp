@@ -7,8 +7,8 @@ class Program
         int count = 0;
         for (int seed = 1; seed < 10001; ++seed)
         {
-            Console.WriteLine($"Seed: {seed}");
-            var random = new Random();
+            // Console.WriteLine($"Seed: {seed}");
+            var random = new Random(seed);
            int total = RunMasterOfSkipping(random);
             count += total;
         }

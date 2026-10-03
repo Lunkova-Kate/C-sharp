@@ -4,6 +4,7 @@ namespace MasterOfSkipping;
 public class Semester
 {
     private int _enjoyment;
+    private int _daysElapsed = 0;
     bool[] yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
     private History _history;
     private readonly Professor[] _professors;
@@ -48,23 +49,25 @@ public class Semester
 
     public int Run(out int daysElapsed, out bool expelled)
     {
-        daysElapsed = 0;
-        for (int day = 0; day < SimulationSettings.DaysInSemester; ++day)
+        while (_daysElapsed < SimulationSettings.DaysInSemester)
         {
-            if (!ProcessDay(day))
+            bool survived = ProcessDay();
+            if (!survived)
             {
-                daysElapsed = day + 1;
+                daysElapsed = _daysElapsed;
                 expelled = true;
-                return 0;
+                return _enjoyment;
             }
         }
         daysElapsed = SimulationSettings.DaysInSemester;
         expelled = false;
         return _enjoyment;
     }
-    private bool ProcessDay(int dayNumber)
-    {
-        bool[] attend = _strategy.DecideDay(dayNumber, _history);
+
+    public bool ProcessDay()
+    {   
+        
+        bool[] attend = _strategy.DecideDay(_daysElapsed, _history);
         if (attend is null)
         {
             throw new InvalidOperationException(
@@ -87,26 +90,29 @@ public class Semester
             todayAsked[i] = willAsk;
             if (attend[i])
             {
-                _history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                _history.RecordVisit(_daysElapsed, (Subject)i, willAsk);
             }
             else
             {
                 if (willAsk)
                 {
                     _enjoyment = 0;
-                    _history.RecordSkip(dayNumber, (Subject)i);
+                    _history.RecordSkip(_daysElapsed, (Subject)i);
+                    ++_daysElapsed;
                     return false;
                 }
                 else
                 {
                     ++_enjoyment;
-                    _history.RecordSkip(dayNumber, (Subject)i);
+                    _history.RecordSkip(_daysElapsed, (Subject)i);
+                    
                 }
             }
 
         }
         _enjoyment += smallPie;
         yesterdayAsked = todayAsked;
+        ++_daysElapsed;
         return true;
     }
 
