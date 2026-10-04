@@ -10,6 +10,9 @@ public class Semester
     private readonly Professor[] _professors;
     private readonly ISkipStrategy _strategy;
     private const int SmallPie = 1;
+    public int DaysElapsed => _daysElapsed;
+    public int TotalEnjoyment => _enjoyment;
+    public double AverageEnjoyment => _daysElapsed == 0 ? 0 : (double)_enjoyment / _daysElapsed;
 
     public Semester(Professor[] professors, ISkipStrategy strategy)
     {
