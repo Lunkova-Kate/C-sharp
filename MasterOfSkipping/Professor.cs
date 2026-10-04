@@ -2,10 +2,10 @@ namespace MasterOfSkipping;
 
 public class Professor
 {
-    private readonly Subject a;
-    private readonly Subject b;
-    private readonly RuleType rule;
-    private readonly Random random;
+    private readonly Subject _subjectA;
+    private readonly Subject _subjectB;
+    private readonly RuleType _rule;
+    private readonly Random _random;
 
 
     public Subject Subject { get; }
@@ -13,27 +13,27 @@ public class Professor
     public Professor(Subject subject, RuleType rule, Random random, Subject a = default, Subject b = default)
     {
         Subject = subject;
-        this.rule = rule;
+        this._rule = rule;
         if (rule == RuleType.XorRule && a == b)
         {
             throw new ArgumentException("Subjects must be different for XorRule");
         }
-        this.a = a;
-        this.b = b;
+        this._subjectA = a;
+        this._subjectB = b;
 
-        this.random = random;
+        this._random = random;
     }
 
     public bool WillAsk(bool[] yesterdayAsked)
     {
-        switch (rule)
+        switch (_rule)
         {
             case RuleType.Random50:
                 return Random50();
             case RuleType.YesterdayA:
-                return YesterdayA(yesterdayAsked, a);
+                return YesterdayA(yesterdayAsked, _subjectA);
             case RuleType.XorRule:
-                return XorRule(yesterdayAsked, a, b);
+                return XorRule(yesterdayAsked, _subjectA, _subjectB);
             default:
                 throw new InvalidOperationException();
         }
@@ -41,7 +41,7 @@ public class Professor
 
     private bool Random50()
     {
-        return random.Next(0, 2) == 1;
+        return _random.Next(0, 2) == 1;
     }
 
     private bool YesterdayA(bool[] yesterdayAsked, Subject subjectA)

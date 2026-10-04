@@ -4,14 +4,14 @@ public static class ProfessorGenerator
 {
     public static Professor[] Generate(Random random)
     {
-        int subjectCount = Enum.GetValues<Subject>().Length;
-        RuleType[] ruleTypes = Enum.GetValues<RuleType>();
+        var subjectCount = Enum.GetValues<Subject>().Length;
+        var ruleTypes = Enum.GetValues<RuleType>();
         var professors = new Professor[subjectCount];
 
         for (int i = 0; i < professors.Length; ++i)
         {
-            Subject subject = (Subject)i;
-            RuleType ruleType = ruleTypes[random.Next(ruleTypes.Length)];
+            var subject = (Subject)i;
+            var ruleType = ruleTypes[random.Next(ruleTypes.Length)];
 
             switch (ruleType)
             {

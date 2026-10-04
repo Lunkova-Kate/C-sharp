@@ -5,7 +5,7 @@ class Program
     static void Main(string[] args)
     {
         int count = 0;
-        for (int seed = 1; seed < 10001; ++seed)
+        for (var seed = 1; seed < 10001; ++seed)
         {
             // Console.WriteLine($"Seed: {seed}");
             var random = new Random(seed);
@@ -32,7 +32,7 @@ class Program
 
         Professor[] professors = ProfessorGenerator.Generate(random);
         ISkipStrategy strategy = new AlwaysAttendStrategy();
-        Semester simulator = new Semester(professors, strategy);
+        var simulator = new Semester(professors, strategy);
 
         int total = simulator.Run(out int days, out bool expelled);
         Console.WriteLine(expelled

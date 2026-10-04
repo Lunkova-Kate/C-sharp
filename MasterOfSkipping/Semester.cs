@@ -5,11 +5,11 @@ public class Semester
 {
     private int _enjoyment;
     private int _daysElapsed = 0;
-    bool[] yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
+    private bool[] _yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
     private History _history;
     private readonly Professor[] _professors;
     private readonly ISkipStrategy _strategy;
-    private const int smallPie = 1;
+    private const int SmallPie = 1;
 
     public Semester(Professor[] professors, ISkipStrategy strategy)
     {
@@ -40,9 +40,9 @@ public class Semester
         this._strategy = strategy;
 
         _enjoyment = 0;
-        for (int i = 0; i < yesterdayAsked.Length; ++i)
+        for (int i = 0; i < _yesterdayAsked.Length; ++i)
         {
-            yesterdayAsked[i] = false;
+            _yesterdayAsked[i] = false;
         }
         _history = new History();
     }
@@ -86,7 +86,7 @@ public class Semester
         for (int i = 0; i < todayAsked.Length; ++i)
         {
 
-            bool willAsk = _professors[i].WillAsk(yesterdayAsked);
+            bool willAsk = _professors[i].WillAsk(_yesterdayAsked);
             todayAsked[i] = willAsk;
             if (attend[i])
             {
@@ -110,8 +110,8 @@ public class Semester
             }
 
         }
-        _enjoyment += smallPie;
-        yesterdayAsked = todayAsked;
+        _enjoyment += SmallPie;
+        _yesterdayAsked = todayAsked;
         ++_daysElapsed;
         return true;
     }
