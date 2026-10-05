@@ -1,5 +1,6 @@
 
 namespace MasterOfSkipping;
+
 using Microsoft.Extensions.Hosting;
 
 public sealed class MyWorker : BackgroundService
@@ -12,10 +13,10 @@ public sealed class MyWorker : BackgroundService
         _semester = semester;
         _applicationLifetime = applicationLifetime;
     }
-    
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-       
+
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(5000, stoppingToken);
@@ -24,11 +25,11 @@ public sealed class MyWorker : BackgroundService
             if (!survived)
             {
                 Console.WriteLine($"Student expelled after {_semester.DaysElapsed} days.");
-                    _applicationLifetime.StopApplication();
+                _applicationLifetime.StopApplication();
                 break;
             }
-            
+
         }
-        
+
     }
 }

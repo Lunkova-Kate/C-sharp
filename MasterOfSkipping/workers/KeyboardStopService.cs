@@ -1,4 +1,5 @@
 namespace MasterOfSkipping;
+
 using Microsoft.Extensions.Hosting;
 
 public sealed class KeyboardStopService : BackgroundService
@@ -17,9 +18,9 @@ public sealed class KeyboardStopService : BackgroundService
             {
                 var key = Console.ReadKey();
                 Console.WriteLine("Stopping the application...");
-                 _applicationLifetime.StopApplication();
-                 return;
-                
+                _applicationLifetime.StopApplication();
+                return;
+
             }
             await Task.Delay(100, stoppingToken);
         }

@@ -68,8 +68,8 @@ public class Semester
     }
 
     public bool ProcessDay()
-    {   
-        
+    {
+
         bool[] attend = _strategy.DecideDay(_daysElapsed, _history);
         if (attend is null)
         {
@@ -108,7 +108,7 @@ public class Semester
                 {
                     ++_enjoyment;
                     _history.RecordSkip(_daysElapsed, (Subject)i);
-                    
+
                 }
             }
 
