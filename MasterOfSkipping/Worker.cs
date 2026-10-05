@@ -18,6 +18,7 @@ public class MyWorker : BackgroundService
        
         while (!stoppingToken.IsCancellationRequested)
         {
+            await Task.Delay(5000, stoppingToken);
             var survived = _semester.ProcessDay();
             Console.WriteLine($"Day {_semester.DaysElapsed}: Total Enjoyment: {_semester.TotalEnjoyment}, Average Enjoyment: {_semester.AverageEnjoyment:F2}");
             if (!survived)
@@ -26,7 +27,7 @@ public class MyWorker : BackgroundService
                     _applicationLifetime.StopApplication();
                 break;
             }
-            await Task.Delay(5000, stoppingToken);
+            
         }
         
     }
