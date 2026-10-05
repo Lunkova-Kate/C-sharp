@@ -2,7 +2,7 @@
 namespace MasterOfSkipping;
 using Microsoft.Extensions.Hosting;
 
-public class MyWorker : BackgroundService
+public sealed class MyWorker : BackgroundService
 {
     private readonly Semester _semester;
     private readonly IHostApplicationLifetime _applicationLifetime;
