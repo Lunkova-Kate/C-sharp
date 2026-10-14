@@ -7,6 +7,12 @@ class Program
 {
     static async Task Main(string[] args)
     {
+
+
+        // BenchmarkRunner.Run(iterations: 1000, seed: Random.Shared.Next());
+        // return;
+
+
         // Console.ReadKey();
 
         int seed;
@@ -26,7 +32,7 @@ class Program
         }
         
         builder.Services.AddSingleton(new Random(seed));
-        builder.Services.AddSingleton<ISkipStrategy, AlwaysAttendStrategy>();
+        builder.Services.AddSingleton<ISkipStrategy, MyStrategy>();
         builder.Services.AddSingleton<Semester>(injection =>
         {
             var random = injection.GetRequiredService<Random>();
