@@ -6,7 +6,7 @@ public class MyStrategy : ISkipStrategy
 
     private const int SubjectCount = 6;
     private const int HypothesisCount = 21;
-    private const int MinimumObservationDays = 12;
+    private const int MinimumObservationDays = 10;
     private static readonly byte[] SubjectsUsedByHypothesis;
 
     static MyStrategy()

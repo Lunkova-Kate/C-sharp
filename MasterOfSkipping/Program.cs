@@ -9,11 +9,11 @@ class Program
     {
 
 
-        // BenchmarkRunner.Run(iterations: 1000, seed: Random.Shared.Next());
+        // BenchmarkRunner.Run(iterations: 10000, seed: Random.Shared.Next());
         // return;
 
 
-        // Console.ReadKey();
+        Console.ReadKey();
 
         int seed;
         var builder = Host.CreateApplicationBuilder(args);
