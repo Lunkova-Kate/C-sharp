@@ -6,117 +6,151 @@ public class MyStrategy : ISkipStrategy
 
     private const int SubjectCount = 6;
     private const int HypothesisCount = 21;
-    private const int MinimumObservationDays = 14;
+    private const int MinimumObservationDays = 12;
     private static readonly byte[] SubjectsUsedByHypothesis;
 
     static MyStrategy()
     {
-        byte[] SubjectsUsedByHypothesis = new byte[HypothesisCount];
+        SubjectsUsedByHypothesis = new byte[HypothesisCount];
         int hypothesisIndex = 0;
 
-        for (int i = 0; i < SubjectCount; ++i)
+        for (int subjectIndex = 0; subjectIndex < SubjectCount; ++subjectIndex)
         {
-            SubjectsUsedByHypothesis[hypothesisIndex++] = (byte)(1 << i);
-
+            SubjectsUsedByHypothesis[hypothesisIndex++] =
+                (byte)(1 << subjectIndex);
         }
 
-        for (int i = 0; i < SubjectCount; ++i)
+        for (int firstSubject = 0; firstSubject < SubjectCount; ++firstSubject)
         {
-            for (int j = i + 1; j < SubjectCount; ++j)
+            for (int secondSubject = firstSubject + 1;
+                 secondSubject < SubjectCount;
+                 ++secondSubject)
             {
                 SubjectsUsedByHypothesis[hypothesisIndex++] =
-                    (byte)((1 << i) | (1 << j));
+                    (byte)((1 << firstSubject) | (1 << secondSubject));
             }
         }
     }
 
-    // Взять результаты вчерашнего дня и одну гипотезу, 
-    // после чего вычислить, предсказывает ли эта гипотеза опрос 
-    // сегодня.
-    private static bool Predict(byte whoAskedYeasterday, byte hypothes)
+    private static bool Predict(byte askedYesterday, byte hypothesis)
     {
-        return (whoAskedYesterday & hypothesis) != 0;
+        int matchingAskedSubjects = askedYesterday & hypothesis;
+
+        return matchingAskedSubjects != 0 &&
+               (matchingAskedSubjects & (matchingAskedSubjects - 1)) == 0;
     }
-    public bool[] DecideDay(int currentday, IReadOnlyStudentHistory history)
+
+    public bool[] DecideDay(int currentDay, IReadOnlyStudentHistory history)
     {
-        bool[] decisions = new bool[SubjectCount];
-        if (currentDay == 0)
+        ArgumentNullException.ThrowIfNull(history);
+
+        if (currentDay < 0)
         {
-            Array.Fill(decisions, true);
-            return decisions;
+            throw new ArgumentOutOfRangeException(
+                nameof(currentDay),
+                "Day cannot be negative.");
         }
 
-        byte[] PreviousDayMask = new byte[SubjectCount];
+        bool[] shouldAttend = new bool[SubjectCount];
+
+        if (currentDay == 0)
+        {
+            Array.Fill(shouldAttend, true);
+            return shouldAttend;
+        }
+
+        
+        byte[] askedSubjectsByDay = new byte[currentDay];
 
         for (int observedDay = 0; observedDay < currentDay; ++observedDay)
         {
-            byte[] todaySubjectMask = new byte[SubjectCount];
+            byte askedSubjects = 0;
 
             for (int subjectIndex = 0; subjectIndex < SubjectCount; ++subjectIndex)
             {
-                Subject observedSubject = (Subject)subjectIndex;
-                if (studentHistory.Attended(observedDay, observedSubject) &&
-                    studentHistory.WasAsked(observedDay, observedSubject) == true)
+                Subject subject = (Subject)subjectIndex;
+
+                if (history.Attended(observedDay, subject) &&
+                    history.WasAsked(observedDay, subject) == true)
                 {
-                    todaySubjectMask[subjectIndex] |= (byte)(1 << subjectIndex);
+                    askedSubjects |= (byte)(1 << subjectIndex);
                 }
             }
-            PreviousDayMask[observedDay] = todaySubjectMask[observedDay];
-        }
-        byte lastAskedSubjects = PreviousDayMask[currentDay - 1];
 
-        for (int currentSubject = 0; currentSubject < SubjectCount; ++currentSubject)
+            askedSubjectsByDay[observedDay] = askedSubjects;
+        }
+
+        byte askedYesterday = askedSubjectsByDay[currentDay - 1];
+
+        for (int currentSubject = 0;
+             currentSubject < SubjectCount;
+             ++currentSubject)
         {
+        
             int possibleHypotheses = (1 << HypothesisCount) - 1;
 
             for (int observedDay = 0; observedDay < currentDay; ++observedDay)
             {
-                //  кто спрашивал за день до него;
-                byte previousDayAskedSubjects = observedDay == 0 ? (byte)0 : PreviousDayMask[observedDay - 1];
+                byte askedOnPreviousDay = observedDay == 0
+                    ? (byte)0
+                    : askedSubjectsByDay[observedDay - 1];
 
-                // спрашивал ли текущий преподаватель в сам рассматриваемый день.
-                bool wasAskedOncurrentSubject = (PreviousDayMask[observedDay] & (1 << currentSubject)) != 0;
-                for (int hypothesisIndex = 0; hypothesisIndex < HypothesisCount; ++hypothesisIndex)
+                bool currentProfessorAsked =
+                    (askedSubjectsByDay[observedDay] & (1 << currentSubject)) != 0;
+
+                for (int hypothesisIndex = 0;
+                     hypothesisIndex < HypothesisCount;
+                     ++hypothesisIndex)
                 {
-                    bool hypothesisIsStillPossible = (possibleHypotheses & (1 << hypothesisIndex)) != 0;
-                    if (hypothesisIsStillPossible)
+                    int hypothesisBit = 1 << hypothesisIndex;
+
+                    if ((possibleHypotheses & hypothesisBit) == 0)
                     {
-                        byte subjectsUsedByRule = SubjectsUsedByHypothesis[hypothesisIndex];
-                        bool predictsQuestion = Predict(previousDayAskedSubjects, subjectsUsedByRule);
-                        if (predictsQuestion != wasAskedOncurrentSubject)
-                        {
-                            possibleHypotheses &= ~(1 << hypothesisIndex);
-                        }
+                        continue;
                     }
-                    if (possibleHypotheses == 0)// значит преподаватель Random50 скорее всего
+
+                    bool predictedQuestion = Predict(
+                        askedOnPreviousDay,
+                        SubjectsUsedByHypothesis[hypothesisIndex]);
+
+                    if (predictedQuestion != currentProfessorAsked)
                     {
+                        possibleHypotheses &= ~hypothesisBit;
+                    }
+                }
+                if (possibleHypotheses == 0)
+                {
+                    break;
+                }
+            }
+
+            bool allPossibleRulesPredictNoQuestion = possibleHypotheses != 0;
+
+            if (allPossibleRulesPredictNoQuestion)
+            {
+                for (int hypothesisIndex = 0;
+                     hypothesisIndex < HypothesisCount;
+                     ++hypothesisIndex)
+                {
+                    int hypothesisBit = 1 << hypothesisIndex;
+
+                    if ((possibleHypotheses & hypothesisBit) != 0 &&
+                        Predict(
+                            askedYesterday,
+                            SubjectsUsedByHypothesis[hypothesisIndex]))
+                    {
+                        allPossibleRulesPredictNoQuestion = false;
                         break;
                     }
                 }
-                allPossibleRulesPredictNoQuestion = possibleHypotheses != 0;
-
-                if (allPossibleRulesPredictNoQuestion && currentDay < MinimumObservationDays)
-                {
-                    for (int hypothesisIndex = 0; hypothesisIndex < HypothesisCount; ++hypothesisIndex)
-                    {
-                        bool hypothesisIsStillPossible = (possibleHypotheses & (1 << hypothesisIndex)) != 0;
-
-                        if (hypothesisIsStillPossible && Predict(lastAskedSubjects, SubjectsUsedByHypothesis[hypothesisIndex]))
-                        {
-                            allPossibleRulesPredictNoQuestion = false; // если хоття бы одно правило говорит что могут спросить, то прогул не безопасен
-                            break;
-                        }
-
-                    }
-                }
-                else
-                {
-                    allPossibleRulesPredictNoQuestion = false;
-                }
-
-                shouldAttendSubject[currentSubject] = !allPossibleRulesPredictNoQuestion;
             }
-            return decisions;
+
+            bool enoughObservations = currentDay >= MinimumObservationDays;
+
+            shouldAttend[currentSubject] =
+                !enoughObservations || !allPossibleRulesPredictNoQuestion;
         }
+
+        return shouldAttend;
     }
 }
