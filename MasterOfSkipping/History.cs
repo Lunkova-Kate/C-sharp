@@ -1,31 +1,37 @@
 namespace MasterOfSkipping;
 
 public class History : IReadOnlyStudentHistory
-{
-    private const int TotalDays = SimulationSettings.DaysInSemester;
-    private static readonly int TotalSubjects = Enum.GetValues<Subject>().Length;
-    private bool[,] _attended = new bool[TotalDays, TotalSubjects];
-    private bool?[,] _wasAsked = new bool?[TotalDays, TotalSubjects];
+{  
+    private readonly List<DayHistory> _dayHistories  = new List<DayHistory>();
 
     public void RecordVisit(int day, Subject subject, bool wasAsked)
     {
-        _attended[day, (int)subject] = true;
-        _wasAsked[day, (int)subject] = wasAsked;
+        if (day == _dayHistories.Count)
+        {
+            _dayHistories.Add(new DayHistory());
+           
+        }
+          _dayHistories[day].RecordVisitAtThisDay(subject, wasAsked);
     }
 
     public void RecordSkip(int day, Subject subject)
     {
-        _attended[day, (int)subject] = false;
-        _wasAsked[day, (int)subject] = null;
+        if (day == _dayHistories.Count)
+        {
+            _dayHistories.Add(new DayHistory());
+            
+        }
+        _dayHistories[day].RecordSkipAtThisDay(subject);
     }
 
     public bool Attended(int day, Subject subject)
     {
-        return _attended[day, (int)subject];
+        return _dayHistories[day].AttendedAtThisDay(subject);
     }
 
     public bool? WasAsked(int day, Subject subject)
     {
-        return _wasAsked[day, (int)subject];
+        return _dayHistories[day].WasAskedAtThisDay(subject);
+
     }
 }

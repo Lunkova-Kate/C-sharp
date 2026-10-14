@@ -4,11 +4,15 @@ namespace MasterOfSkipping;
 public class Semester
 {
     private int _enjoyment;
-    bool[] yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
+    private int _daysElapsed = 0;
+    private bool[] _yesterdayAsked = new bool[Enum.GetValues<Subject>().Length];
     private History _history;
     private readonly Professor[] _professors;
     private readonly ISkipStrategy _strategy;
-    private const int smallPie = 1;
+    private const int SmallPie = 1;
+    public int DaysElapsed => _daysElapsed;
+    public int TotalEnjoyment => _enjoyment;
+    public double AverageEnjoyment => _daysElapsed == 0 ? 0 : (double)_enjoyment / _daysElapsed;
 
     public Semester(Professor[] professors, ISkipStrategy strategy)
     {
@@ -39,32 +43,34 @@ public class Semester
         this._strategy = strategy;
 
         _enjoyment = 0;
-        for (int i = 0; i < yesterdayAsked.Length; ++i)
+        for (int i = 0; i < _yesterdayAsked.Length; ++i)
         {
-            yesterdayAsked[i] = false;
+            _yesterdayAsked[i] = false;
         }
         _history = new History();
     }
 
     public int Run(out int daysElapsed, out bool expelled)
     {
-        daysElapsed = 0;
-        for (int day = 0; day < SimulationSettings.DaysInSemester; ++day)
+        while (_daysElapsed < SimulationSettings.DaysInSemester)
         {
-            if (!ProcessDay(day))
+            bool survived = ProcessDay();
+            if (!survived)
             {
-                daysElapsed = day + 1;
+                daysElapsed = _daysElapsed;
                 expelled = true;
-                return 0;
+                return _enjoyment;
             }
         }
         daysElapsed = SimulationSettings.DaysInSemester;
         expelled = false;
         return _enjoyment;
     }
-    private bool ProcessDay(int dayNumber)
+
+    public bool ProcessDay()
     {
-        bool[] attend = _strategy.DecideDay(dayNumber, _history);
+
+        bool[] attend = _strategy.DecideDay(_daysElapsed, _history);
         if (attend is null)
         {
             throw new InvalidOperationException(
@@ -83,30 +89,33 @@ public class Semester
         for (int i = 0; i < todayAsked.Length; ++i)
         {
 
-            bool willAsk = _professors[i].WillAsk(yesterdayAsked);
+            bool willAsk = _professors[i].WillAsk(_yesterdayAsked);
             todayAsked[i] = willAsk;
             if (attend[i])
             {
-                _history.RecordVisit(dayNumber, (Subject)i, willAsk);
+                _history.RecordVisit(_daysElapsed, (Subject)i, willAsk);
             }
             else
             {
                 if (willAsk)
                 {
                     _enjoyment = 0;
-                    _history.RecordSkip(dayNumber, (Subject)i);
+                    _history.RecordSkip(_daysElapsed, (Subject)i);
+                    ++_daysElapsed;
                     return false;
                 }
                 else
                 {
                     ++_enjoyment;
-                    _history.RecordSkip(dayNumber, (Subject)i);
+                    _history.RecordSkip(_daysElapsed, (Subject)i);
+
                 }
             }
 
         }
-        _enjoyment += smallPie;
-        yesterdayAsked = todayAsked;
+        _enjoyment += SmallPie;
+        _yesterdayAsked = todayAsked;
+        ++_daysElapsed;
         return true;
     }
 
