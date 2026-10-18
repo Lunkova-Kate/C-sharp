@@ -1,0 +1,35 @@
+using Xunit;
+using MasterOfSkipping;
+
+public class ProfessorsTests
+{
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
+    public void WillAsk_YesterdayARule_ReturnsStateOfSubjectA(bool input, bool expected)
+    {
+        var professor = new Professor(Subject.English, RuleType.YesterdayA, new Random(42), Subject.Calculus);
+        var yesterday = new bool[6];
+        yesterday[(int)Subject.Calculus] = input;
+        bool actual = professor.WillAsk(yesterday);
+        Assert.Equal(expected, actual);
+
+    }
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    public void WillAsk_XorRule_ReturnStateOfSubject(bool askedA, bool askedB, bool expected)
+    {
+        var professor = new Professor(Subject.English, RuleType.YesterdayA, new Random(42), Subject.Calculus);
+        var yesterday = new bool[6];
+        yesterday[(int)Subject.Calculus] = askedA;
+        yesterday[(int)Subject.Physics] = askedB;
+
+        bool actual = professor.WillAsk(yesterday);
+
+        Assert.Equal(expected, actual);
+    }
+
+}
