@@ -60,4 +60,17 @@ public class ProfessorsTests
                 Subject.Calculus));
     }
 
+    [Fact]
+    public void WillAsk_UnknownRuleType_ThrowsInvalidOperationException()
+    {
+        var unknownRule = (RuleType)999;
+        var professor = new Professor(
+            Subject.English,
+            unknownRule,
+            new Random(42));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            professor.WillAsk(new bool[6]));
+    }
+
 }
