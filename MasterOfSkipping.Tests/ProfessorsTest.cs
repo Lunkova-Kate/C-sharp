@@ -33,4 +33,31 @@ public class ProfessorsTests
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    public void WillAsk_Random50Rule_ReturnsValueFromRandom(int randomValue, bool expected)
+    {
+        var professor = new Professor(
+            Subject.English,
+            RuleType.Random50,
+            new FixedRandom(randomValue));
+
+        bool actual = professor.WillAsk(new bool[6]);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Constructor_XorRuleWithSameSubjects_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Professor(
+                Subject.English,
+                RuleType.XorRule,
+                new Random(42),
+                Subject.Calculus,
+                Subject.Calculus));
+    }
+
 }
