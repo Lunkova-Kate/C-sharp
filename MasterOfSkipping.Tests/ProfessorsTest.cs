@@ -1,5 +1,6 @@
 using Xunit;
 using MasterOfSkipping;
+using MasterOfSkipping.Tests.TestedClass;
 
 public class ProfessorsTests
 {
@@ -22,7 +23,7 @@ public class ProfessorsTests
     [InlineData(true, true, false)]
     public void WillAsk_XorRule_ReturnStateOfSubject(bool askedA, bool askedB, bool expected)
     {
-        var professor = new Professor(Subject.English, RuleType.YesterdayA, new Random(42), Subject.Calculus);
+        var professor = new Professor(Subject.English, RuleType.XorRule, new Random(42), Subject.Calculus, Subject.Physics);
         var yesterday = new bool[6];
         yesterday[(int)Subject.Calculus] = askedA;
         yesterday[(int)Subject.Physics] = askedB;
