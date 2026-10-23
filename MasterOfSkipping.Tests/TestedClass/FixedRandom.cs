@@ -9,6 +9,11 @@ internal sealed class FixedRandom : Random
         _value = value;
     }
 
+    public override int Next(int maxValue)
+    {
+        return _value;
+    }
+
     public override int Next(int minValue, int maxValue)
     {
         return _value;
