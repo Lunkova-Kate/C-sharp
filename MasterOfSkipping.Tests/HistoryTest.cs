@@ -32,7 +32,7 @@ public void RecordSkip_StudentAbsent_QuestionUnknown()
 }
 
 [Fact]
-public void CheckHistory()
+public void RecordVisitAndSkip_DifferentDays_PreserveHistory()
     {
         var history = new History();
         Subject subject = Subject.Programming;
