@@ -6,10 +6,6 @@ using MasterOfSkipping.Tests.TestedClass;
 public class HistoryTest
 {
 
-
-// public void RecordVisit(int day, Subject subject, bool wasAsked)
-// public bool Attended(int day, Subject subject)
-//     public bool? WasAsked(int day, Subject subject)
 [Fact]
 public void RecordVisit_AttendedAndAsked_SavesBothValues()
 {
@@ -23,14 +19,12 @@ public void RecordVisit_AttendedAndAsked_SavesBothValues()
     Assert.True(history.WasAsked(day, subject));
 }
 
-// RecordSkip(int day, Subject subject)
 [Fact]
 public void RecordSkip_StudentAbsent_QuestionUnknown()
 {
     var history = new History();
     var day = 0;
     Subject subject = Subject.Calculus;
-    // bool wasAsked = true;
     history.RecordSkip(day,subject);
 
     Assert.False( history.Attended(day, subject));
