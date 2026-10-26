@@ -44,8 +44,7 @@ public class SemestrTests
         Professor[] professors = CreateProfessors(firstProfessorAsks: true);
 
         professors[(int)Subject.LinearAlgebra] =
-            new Professor(
-                Subject.LinearAlgebra,
+            new Professor(Subject.LinearAlgebra,
                 RuleType.YesterdayA,
                 new FixedRandom(0),
                 Subject.Calculus);
@@ -61,14 +60,12 @@ public class SemestrTests
 
         var semester = new Semester(professors, strategy);
 
-        // день 1
         bool firstDaySurvived = semester.ProcessDay();
 
         Assert.True(firstDaySurvived);
         Assert.Equal(2, semester.TotalEnjoyment);
         Assert.Equal(1, semester.DaysElapsed);
 
-        // семестр с дня 2.
         int finalEnjoyment = semester.Run(
             out int daysElapsed,
             out bool expelled);
@@ -105,4 +102,7 @@ public class SemestrTests
 
         return professors;
     }
+
+
+    
 }
