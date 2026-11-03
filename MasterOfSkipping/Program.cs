@@ -13,7 +13,7 @@ class Program
         // return;
 
 
-        Console.ReadKey();
+        // Console.ReadKey();
 
         int seed;
         var builder = Host.CreateApplicationBuilder(args);
