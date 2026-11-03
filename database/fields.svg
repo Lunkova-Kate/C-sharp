@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3000" height="1100" viewBox="0 0 3000 1100" role="img" aria-labelledby="title desc">
+  <title id="title">Поля и ограничения таблиц Master of Skipping</title>
+  <desc id="desc">Восемь таблиц с колонками Поле, PK, NN, U и FK. Внешние ключи соединены линиями с целевыми таблицами.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#444"/></marker>
+    <style>
+      .title{font:700 34px Inter,"Segoe UI",Arial,sans-serif;fill:#111}.box{fill:#fff;stroke:#333;stroke-width:1.5}.head-student,.head-professor,.head-history,.head-reference{fill:#eee}
+      .tname{font:700 18px Inter,"Segoe UI",Arial,sans-serif;fill:#172033}.sql{font:600 12px "Cascadia Mono",Consolas,monospace;fill:#667085}
+      .ch{font:700 13px Inter,"Segoe UI",Arial,sans-serif;fill:#333;text-anchor:middle}.field{font:400 14px "Cascadia Mono",Consolas,monospace;fill:#111}.plus{font:800 18px Inter,"Segoe UI",Arial,sans-serif;fill:#111;text-anchor:middle}
+      .grid{stroke:#bbb;stroke-width:1}.pk-note{font:600 12px Inter,"Segoe UI",Arial,sans-serif;fill:#333}.fk{fill:none;stroke:#444;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+      .fk-label{font:600 12px "Cascadia Mono",Consolas,monospace;fill:#222;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+    </style>
+  </defs>
+  <rect width="3000" height="1100" fill="#fff"/>
+  <text x="50" y="54" class="title">Поля и ограничения таблиц</text>
+
+  <!-- FK connectors -->
+  <g id="foreign-keys">
+    <path class="fk" d="M800 236 C690 236 650 450 510 450"/>
+    <path class="fk" d="M800 272 C690 272 650 180 510 180"/>
+    <path class="fk" d="M800 308 C665 308 650 820 510 820"/>
+    <path class="fk" d="M800 344 C675 344 640 205 510 205"/>
+    <path class="fk" d="M800 380 C665 380 630 230 510 230"/>
+    <path class="fk" d="M800 726 C680 726 650 520 510 520"/>
+    <path class="fk" d="M1570 596 C1450 596 1400 710 1260 710"/><text x="1300" y="660" class="fk-label">(semester_id, day_number)</text>
+    <path class="fk" d="M1570 660 C1440 660 1410 330 1260 330"/><text x="1300" y="480" class="fk-label">(semester_id, subject_code)</text>
+    <path class="fk" d="M2440 300 C2260 300 2200 575 2030 575"/><text x="2160" y="425" class="fk-label">PK → lesson</text>
+    <path class="fk" d="M2440 830 C2260 830 2200 650 2030 650"/><text x="2160" y="760" class="fk-label">PK → lesson</text>
+  </g>
+
+  <!-- SUBJECT: x=50 y=130 w=460 h=196 -->
+  <g id="subject-table">
+    <rect x="50" y="130" width="460" height="196" rx="12" class="box"/><path d="M62 130 H498 Q510 130 510 142 V180 H50 V142 Q50 130 62 130 Z" class="head-reference"/>
+    <text x="70" y="161" class="tname">ПРЕДМЕТ</text><text x="490" y="160" text-anchor="end" class="sql">subject</text>
+    <line x1="50" y1="180" x2="510" y2="180" class="grid"/><line x1="50" y1="218" x2="510" y2="218" class="grid"/><line x1="50" y1="254" x2="510" y2="254" class="grid"/><line x1="50" y1="290" x2="510" y2="290" class="grid"/>
+    <line x1="320" y1="180" x2="320" y2="326" class="grid"/><line x1="367.5" y1="180" x2="367.5" y2="326" class="grid"/><line x1="415" y1="180" x2="415" y2="326" class="grid"/><line x1="462.5" y1="180" x2="462.5" y2="326" class="grid"/>
+    <text x="185" y="205" class="ch">Поле</text><text x="343.75" y="205" class="ch">PK</text><text x="391.25" y="205" class="ch">NN</text><text x="438.75" y="205" class="ch">U</text><text x="486.25" y="205" class="ch">FK</text>
+    <text x="70" y="242" class="field">code : varchar(32)</text><text x="343.75" y="244" class="plus">+</text><text x="391.25" y="244" class="plus">+</text>
+    <text x="70" y="278" class="field">name : varchar(100)</text><text x="391.25" y="280" class="plus">+</text><text x="438.75" y="280" class="plus">+</text>
+    <text x="70" y="314" class="field">lesson_order : smallint</text><text x="391.25" y="316" class="plus">+</text><text x="438.75" y="316" class="plus">+</text>
+  </g>
+
+  <!-- SEMESTER: x=50 y=390 w=460 h=268 -->
+  <g id="semester-table">
+    <rect x="50" y="390" width="460" height="268" rx="12" class="box"/><path d="M62 390 H498 Q510 390 510 402 V440 H50 V402 Q50 390 62 390 Z" class="head-student"/>
+    <text x="70" y="421" class="tname">СЕМЕСТР</text><text x="490" y="420" text-anchor="end" class="sql">semester</text>
+    <line x1="50" y1="440" x2="510" y2="440" class="grid"/><line x1="50" y1="478" x2="510" y2="478" class="grid"/><line x1="50" y1="514" x2="510" y2="514" class="grid"/><line x1="50" y1="550" x2="510" y2="550" class="grid"/><line x1="50" y1="586" x2="510" y2="586" class="grid"/><line x1="50" y1="622" x2="510" y2="622" class="grid"/>
+    <line x1="320" y1="440" x2="320" y2="658" class="grid"/><line x1="367.5" y1="440" x2="367.5" y2="658" class="grid"/><line x1="415" y1="440" x2="415" y2="658" class="grid"/><line x1="462.5" y1="440" x2="462.5" y2="658" class="grid"/>
+    <text x="185" y="465" class="ch">Поле</text><text x="343.75" y="465" class="ch">PK</text><text x="391.25" y="465" class="ch">NN</text><text x="438.75" y="465" class="ch">U</text><text x="486.25" y="465" class="ch">FK</text>
+    <text x="70" y="502" class="field">id : uuid</text><text x="343.75" y="504" class="plus">+</text><text x="391.25" y="504" class="plus">+</text>
+    <text x="70" y="538" class="field">seed : integer</text><text x="391.25" y="540" class="plus">+</text>
+    <text x="70" y="574" class="field">days_completed : smallint</text><text x="391.25" y="576" class="plus">+</text>
+    <text x="70" y="610" class="field">total_enjoyment : integer</text><text x="391.25" y="612" class="plus">+</text>
+    <text x="70" y="646" class="field">is_expelled : boolean</text><text x="391.25" y="648" class="plus">+</text>
+  </g>
+
+  <!-- RULE TYPE: x=50 y=770 w=460 h=160 -->
+  <g id="rule-table">
+    <rect x="50" y="770" width="460" height="160" rx="12" class="box"/><path d="M62 770 H498 Q510 770 510 782 V820 H50 V782 Q50 770 62 770 Z" class="head-professor"/>
+    <text x="70" y="801" class="tname">ТИП ПРАВИЛА</text><text x="490" y="800" text-anchor="end" class="sql">rule_type</text>
+    <line x1="50" y1="820" x2="510" y2="820" class="grid"/><line x1="50" y1="858" x2="510" y2="858" class="grid"/><line x1="50" y1="894" x2="510" y2="894" class="grid"/>
+    <line x1="320" y1="820" x2="320" y2="930" class="grid"/><line x1="367.5" y1="820" x2="367.5" y2="930" class="grid"/><line x1="415" y1="820" x2="415" y2="930" class="grid"/><line x1="462.5" y1="820" x2="462.5" y2="930" class="grid"/>
+    <text x="185" y="845" class="ch">Поле</text><text x="343.75" y="845" class="ch">PK</text><text x="391.25" y="845" class="ch">NN</text><text x="438.75" y="845" class="ch">U</text><text x="486.25" y="845" class="ch">FK</text>
+    <text x="70" y="882" class="field">code : varchar(32)</text><text x="343.75" y="884" class="plus">+</text><text x="391.25" y="884" class="plus">+</text>
+    <text x="70" y="918" class="field">name : varchar(100)</text><text x="391.25" y="920" class="plus">+</text><text x="438.75" y="920" class="plus">+</text>
+  </g>
+
+  <!-- SUBJECT SETTING: x=610 y=130 w=460 h=268 -->
+  <g id="setting-table" transform="translate(190 0)">
+    <rect x="610" y="130" width="460" height="268" rx="12" class="box"/><path d="M622 130 H1058 Q1070 130 1070 142 V180 H610 V142 Q610 130 622 130 Z" class="head-professor"/>
+    <text x="630" y="161" class="tname">НАСТРОЙКА ПРЕДМЕТА</text><text x="1050" y="160" text-anchor="end" class="sql">subject_setting</text>
+    <line x1="610" y1="180" x2="1070" y2="180" class="grid"/><line x1="610" y1="218" x2="1070" y2="218" class="grid"/><line x1="610" y1="254" x2="1070" y2="254" class="grid"/><line x1="610" y1="290" x2="1070" y2="290" class="grid"/><line x1="610" y1="326" x2="1070" y2="326" class="grid"/><line x1="610" y1="362" x2="1070" y2="362" class="grid"/>
+    <line x1="880" y1="180" x2="880" y2="398" class="grid"/><line x1="927.5" y1="180" x2="927.5" y2="398" class="grid"/><line x1="975" y1="180" x2="975" y2="398" class="grid"/><line x1="1022.5" y1="180" x2="1022.5" y2="398" class="grid"/>
+    <text x="745" y="205" class="ch">Поле</text><text x="903.75" y="205" class="ch">PK</text><text x="951.25" y="205" class="ch">NN</text><text x="998.75" y="205" class="ch">U</text><text x="1046.25" y="205" class="ch">FK</text>
+    <text x="630" y="242" class="field">semester_id : uuid</text><text x="903.75" y="244" class="plus">+</text><text x="951.25" y="244" class="plus">+</text><text x="1046.25" y="244" class="plus">+</text>
+    <text x="630" y="278" class="field">subject_code : varchar(32)</text><text x="903.75" y="280" class="plus">+</text><text x="951.25" y="280" class="plus">+</text><text x="1046.25" y="280" class="plus">+</text>
+    <text x="630" y="314" class="field">rule_code : varchar(32)</text><text x="951.25" y="316" class="plus">+</text><text x="1046.25" y="316" class="plus">+</text>
+    <text x="630" y="350" class="field">dependency_a_code</text><text x="1046.25" y="352" class="plus">+</text>
+    <text x="630" y="386" class="field">dependency_b_code</text><text x="1046.25" y="388" class="plus">+</text>
+    <text x="620" y="420" class="pk-note">Составной PK: (semester_id, subject_code)</text>
+  </g>
+
+  <!-- SEMESTER DAY: x=610 y=620 w=460 h=232 -->
+  <g id="day-table" transform="translate(190 0)">
+    <rect x="610" y="620" width="460" height="232" rx="12" class="box"/><path d="M622 620 H1058 Q1070 620 1070 632 V670 H610 V632 Q610 620 622 620 Z" class="head-student"/>
+    <text x="630" y="651" class="tname">ДЕНЬ СЕМЕСТРА</text><text x="1050" y="650" text-anchor="end" class="sql">semester_day</text>
+    <line x1="610" y1="670" x2="1070" y2="670" class="grid"/><line x1="610" y1="708" x2="1070" y2="708" class="grid"/><line x1="610" y1="744" x2="1070" y2="744" class="grid"/><line x1="610" y1="780" x2="1070" y2="780" class="grid"/><line x1="610" y1="816" x2="1070" y2="816" class="grid"/>
+    <line x1="880" y1="670" x2="880" y2="852" class="grid"/><line x1="927.5" y1="670" x2="927.5" y2="852" class="grid"/><line x1="975" y1="670" x2="975" y2="852" class="grid"/><line x1="1022.5" y1="670" x2="1022.5" y2="852" class="grid"/>
+    <text x="745" y="695" class="ch">Поле</text><text x="903.75" y="695" class="ch">PK</text><text x="951.25" y="695" class="ch">NN</text><text x="998.75" y="695" class="ch">U</text><text x="1046.25" y="695" class="ch">FK</text>
+    <text x="630" y="732" class="field">semester_id : uuid</text><text x="903.75" y="734" class="plus">+</text><text x="951.25" y="734" class="plus">+</text><text x="1046.25" y="734" class="plus">+</text>
+    <text x="630" y="768" class="field">day_number : smallint</text><text x="903.75" y="770" class="plus">+</text><text x="951.25" y="770" class="plus">+</text>
+    <text x="630" y="804" class="field">total_enjoyment : integer</text><text x="951.25" y="806" class="plus">+</text>
+    <text x="630" y="840" class="field">is_expelled : boolean</text><text x="951.25" y="842" class="plus">+</text>
+    <text x="620" y="874" class="pk-note">Составной PK: (semester_id, day_number)</text>
+  </g>
+
+  <!-- LESSON: x=1165 y=480 w=460 h=196 -->
+  <g id="lesson-table" transform="translate(405 0)">
+    <rect x="1165" y="480" width="460" height="196" rx="12" class="box"/><path d="M1177 480 H1613 Q1625 480 1625 492 V530 H1165 V492 Q1165 480 1177 480 Z" class="head-student"/>
+    <text x="1185" y="511" class="tname">ЗАНЯТИЕ</text><text x="1605" y="510" text-anchor="end" class="sql">lesson</text>
+    <line x1="1165" y1="530" x2="1625" y2="530" class="grid"/><line x1="1165" y1="568" x2="1625" y2="568" class="grid"/><line x1="1165" y1="604" x2="1625" y2="604" class="grid"/><line x1="1165" y1="640" x2="1625" y2="640" class="grid"/>
+    <line x1="1435" y1="530" x2="1435" y2="676" class="grid"/><line x1="1482.5" y1="530" x2="1482.5" y2="676" class="grid"/><line x1="1530" y1="530" x2="1530" y2="676" class="grid"/><line x1="1577.5" y1="530" x2="1577.5" y2="676" class="grid"/>
+    <text x="1300" y="555" class="ch">Поле</text><text x="1458.75" y="555" class="ch">PK</text><text x="1506.25" y="555" class="ch">NN</text><text x="1553.75" y="555" class="ch">U</text><text x="1601.25" y="555" class="ch">FK</text>
+    <text x="1185" y="592" class="field">semester_id : uuid</text><text x="1458.75" y="594" class="plus">+</text><text x="1506.25" y="594" class="plus">+</text><text x="1601.25" y="594" class="plus">+</text>
+    <text x="1185" y="628" class="field">day_number : smallint</text><text x="1458.75" y="630" class="plus">+</text><text x="1506.25" y="630" class="plus">+</text><text x="1601.25" y="630" class="plus">+</text>
+    <text x="1185" y="664" class="field">subject_code : varchar(32)</text><text x="1458.75" y="666" class="plus">+</text><text x="1506.25" y="666" class="plus">+</text><text x="1601.25" y="666" class="plus">+</text>
+    <text x="1175" y="698" class="pk-note">Составной PK: (semester_id, day_number, subject_code)</text>
+  </g>
+
+  <!-- ATTENDANCE: x=1740 y=230 w=460 h=232 -->
+  <g id="attendance-table" transform="translate(700 0)">
+    <rect x="1740" y="230" width="460" height="232" rx="12" class="box"/><path d="M1752 230 H2188 Q2200 230 2200 242 V280 H1740 V242 Q1740 230 1752 230 Z" class="head-student"/>
+    <text x="1760" y="261" class="tname">РЕШЕНИЕ О ПОСЕЩЕНИИ</text><text x="2180" y="260" text-anchor="end" class="sql">attendance_decision</text>
+    <line x1="1740" y1="280" x2="2200" y2="280" class="grid"/><line x1="1740" y1="318" x2="2200" y2="318" class="grid"/><line x1="1740" y1="354" x2="2200" y2="354" class="grid"/><line x1="1740" y1="390" x2="2200" y2="390" class="grid"/><line x1="1740" y1="426" x2="2200" y2="426" class="grid"/>
+    <line x1="2010" y1="280" x2="2010" y2="462" class="grid"/><line x1="2057.5" y1="280" x2="2057.5" y2="462" class="grid"/><line x1="2105" y1="280" x2="2105" y2="462" class="grid"/><line x1="2152.5" y1="280" x2="2152.5" y2="462" class="grid"/>
+    <text x="1875" y="305" class="ch">Поле</text><text x="2033.75" y="305" class="ch">PK</text><text x="2081.25" y="305" class="ch">NN</text><text x="2128.75" y="305" class="ch">U</text><text x="2176.25" y="305" class="ch">FK</text>
+    <text x="1760" y="342" class="field">semester_id : uuid</text><text x="2033.75" y="344" class="plus">+</text><text x="2081.25" y="344" class="plus">+</text><text x="2176.25" y="344" class="plus">+</text>
+    <text x="1760" y="378" class="field">day_number : smallint</text><text x="2033.75" y="380" class="plus">+</text><text x="2081.25" y="380" class="plus">+</text><text x="2176.25" y="380" class="plus">+</text>
+    <text x="1760" y="414" class="field">subject_code : varchar(32)</text><text x="2033.75" y="416" class="plus">+</text><text x="2081.25" y="416" class="plus">+</text><text x="2176.25" y="416" class="plus">+</text>
+    <text x="1760" y="450" class="field">attended : boolean</text><text x="2081.25" y="452" class="plus">+</text>
+    <text x="1750" y="484" class="pk-note">Составной PK: (semester_id, day_number, subject_code)</text>
+  </g>
+
+  <!-- QUESTION RESULT: x=1740 y=760 w=460 h=232 -->
+  <g id="question-table" transform="translate(700 0)">
+    <rect x="1740" y="760" width="460" height="232" rx="12" class="box"/><path d="M1752 760 H2188 Q2200 760 2200 772 V810 H1740 V772 Q1740 760 1752 760 Z" class="head-history"/>
+    <text x="1760" y="791" class="tname">РЕЗУЛЬТАТ ОПРОСА</text><text x="2180" y="790" text-anchor="end" class="sql">question_result</text>
+    <line x1="1740" y1="810" x2="2200" y2="810" class="grid"/><line x1="1740" y1="848" x2="2200" y2="848" class="grid"/><line x1="1740" y1="884" x2="2200" y2="884" class="grid"/><line x1="1740" y1="920" x2="2200" y2="920" class="grid"/><line x1="1740" y1="956" x2="2200" y2="956" class="grid"/>
+    <line x1="2010" y1="810" x2="2010" y2="992" class="grid"/><line x1="2057.5" y1="810" x2="2057.5" y2="992" class="grid"/><line x1="2105" y1="810" x2="2105" y2="992" class="grid"/><line x1="2152.5" y1="810" x2="2152.5" y2="992" class="grid"/>
+    <text x="1875" y="835" class="ch">Поле</text><text x="2033.75" y="835" class="ch">PK</text><text x="2081.25" y="835" class="ch">NN</text><text x="2128.75" y="835" class="ch">U</text><text x="2176.25" y="835" class="ch">FK</text>
+    <text x="1760" y="872" class="field">semester_id : uuid</text><text x="2033.75" y="874" class="plus">+</text><text x="2081.25" y="874" class="plus">+</text><text x="2176.25" y="874" class="plus">+</text>
+    <text x="1760" y="908" class="field">day_number : smallint</text><text x="2033.75" y="910" class="plus">+</text><text x="2081.25" y="910" class="plus">+</text><text x="2176.25" y="910" class="plus">+</text>
+    <text x="1760" y="944" class="field">subject_code : varchar(32)</text><text x="2033.75" y="946" class="plus">+</text><text x="2081.25" y="946" class="plus">+</text><text x="2176.25" y="946" class="plus">+</text>
+    <text x="1760" y="980" class="field">was_asked : boolean</text><text x="2081.25" y="982" class="plus">+</text>
+    <text x="1750" y="1014" class="pk-note">Составной PK: (semester_id, day_number, subject_code)</text>
+  </g>
+
+</svg>

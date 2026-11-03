@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="900" viewBox="0 0 1800 900" role="img" aria-labelledby="title desc">
+  <title id="title">ER-диаграмма базы данных Master of Skipping</title>
+  <desc id="desc">Восемь сущностей без полей, связи показаны ромбами в нотации Чена.</desc>
+  <defs>
+    <style>
+      .title{font:700 34px Inter,"Segoe UI",Arial,sans-serif;fill:#111}.entity{stroke-width:2;fill:#fff;stroke:#222}
+      .student,.professor,.history,.reference{fill:#fff;stroke:#222}
+      .ename{font:700 20px Inter,"Segoe UI",Arial,sans-serif;fill:#172033;text-anchor:middle}.table{font:600 13px "Cascadia Mono",Consolas,monospace;fill:#667085;text-anchor:middle}
+      .connector{fill:none;stroke:#333;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.diamond{fill:#fff;stroke:#222;stroke-width:2}
+      .rel{font:700 12px Inter,"Segoe UI",Arial,sans-serif;fill:#111;text-anchor:middle}.card{font:800 16px Inter,"Segoe UI",Arial,sans-serif;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round}
+    </style>
+  </defs>
+  <rect width="1800" height="900" fill="#fff"/>
+  <text x="60" y="54" class="title">ER-диаграмма «Мастер прогулов»</text>
+
+  <!-- Семестр — Настройка предмета -->
+  <path class="connector" d="M320 380 C350 330 360 260 372 220"/><polygon class="diamond" points="430,183 490,220 430,257 370,220"/><path class="connector" d="M490 220 L550 170"/>
+  <text x="430" y="224" class="rel">ИМЕЕТ</text><text x="330" y="357" class="card">1</text><text x="525" y="186" class="card">N</text>
+  <!-- Семестр — День -->
+  <path class="connector" d="M320 420 C350 485 365 570 372 640"/><polygon class="diamond" points="430,603 490,640 430,677 370,640"/><path class="connector" d="M490 640 L520 645"/>
+  <text x="430" y="644" class="rel">СОДЕРЖИТ</text><text x="329" y="446" class="card">1</text><text x="500" y="630" class="card">N</text>
+
+  <!-- Настройка — основной предмет -->
+  <path class="connector" d="M870 145 L920 120"/><polygon class="diamond" points="980,83 1040,120 980,157 920,120"/><path class="connector" d="M1040 120 L1100 125"/>
+  <text x="980" y="115" class="rel"><tspan x="980">НАСТРАИВАЕТ</tspan><tspan x="980" dy="13">ПРЕДМЕТ</tspan></text><text x="884" y="136" class="card">N</text><text x="1072" y="116" class="card">1</text>
+  <!-- Настройка — зависимость A -->
+  <path class="connector" d="M870 175 L920 200"/><polygon class="diamond" points="980,163 1040,200 980,237 920,200"/><path class="connector" d="M1040 200 C1060 195 1070 175 1100 155"/>
+  <text x="980" y="195" class="rel"><tspan x="980">ИСПОЛЬЗУЕТ</tspan><tspan x="980" dy="13">A</tspan></text><text x="882" y="188" class="card">N</text><text x="1048" y="181" class="card">0..1</text>
+  <!-- Настройка — зависимость Б -->
+  <path class="connector" d="M870 200 L920 280"/><polygon class="diamond" points="980,243 1040,280 980,317 920,280"/><path class="connector" d="M1040 280 C1090 280 1130 225 1190 170"/>
+  <text x="980" y="275" class="rel"><tspan x="980">ИСПОЛЬЗУЕТ</tspan><tspan x="980" dy="13">Б</tspan></text><text x="890" y="230" class="card">N</text><text x="1098" y="251" class="card">0..1</text>
+
+  <!-- Настройка — Тип правила -->
+  <path class="connector" d="M870 205 C900 280 915 340 920 380"/><polygon class="diamond" points="980,343 1040,380 980,417 920,380"/><path class="connector" d="M1040 380 L1100 375"/>
+  <text x="980" y="375" class="rel"><tspan x="980">ИСПОЛЬЗУЕТ</tspan><tspan x="980" dy="13">ПРАВИЛО</tspan></text><text x="892" y="300" class="card">N</text><text x="1070" y="369" class="card">1</text>
+
+  <!-- Настройка — Занятие -->
+  <path class="connector" d="M790 210 C800 340 840 430 842 500"/><polygon class="diamond" points="900,463 960,500 900,537 840,500"/><path class="connector" d="M960 500 C1000 535 1040 570 1070 600"/>
+  <text x="900" y="504" class="rel">ОПРЕДЕЛЯЕТ</text><text x="804" y="275" class="card">1</text><text x="1034" y="565" class="card">N</text>
+
+  <!-- День — Занятие -->
+  <path class="connector" d="M800 645 L825 645"/><polygon class="diamond" points="885,608 945,645 885,682 825,645"/><path class="connector" d="M945 645 L950 645"/>
+  <text x="885" y="649" class="rel">СОДЕРЖИТ</text><text x="805" y="632" class="card">1</text><text x="936" y="632" class="card">N</text>
+
+  <!-- Занятие — Решение -->
+  <path class="connector" d="M1190 600 C1230 565 1260 555 1270 550"/><polygon class="diamond" points="1330,513 1390,550 1330,587 1270,550"/><path class="connector" d="M1390 550 L1420 545"/>
+  <text x="1330" y="545" class="rel"><tspan x="1330">ПОЛУЧАЕТ</tspan><tspan x="1330" dy="13">РЕШЕНИЕ</tspan></text><text x="1220" y="580" class="card">1</text><text x="1397" y="539" class="card">1</text>
+
+  <!-- Занятие — Результат -->
+  <path class="connector" d="M1190 690 C1240 730 1260 775 1270 800"/><polygon class="diamond" points="1330,763 1390,800 1330,837 1270,800"/><path class="connector" d="M1390 800 L1420 805"/>
+  <text x="1330" y="795" class="rel"><tspan x="1330">ИМЕЕТ</tspan><tspan x="1330" dy="13">РЕЗУЛЬТАТ</tspan></text><text x="1225" y="722" class="card">1</text><text x="1392" y="790" class="card">0..1</text>
+
+  <!-- Entity cards -->
+  <g><rect x="60" y="350" width="260" height="100" rx="15" class="entity student"/><text x="190" y="392" class="ename">СЕМЕСТР</text><text x="190" y="420" class="table">semester</text></g>
+  <g><rect x="550" y="120" width="320" height="100" rx="15" class="entity professor"/><text x="710" y="162" class="ename">НАСТРОЙКА ПРЕДМЕТА</text><text x="710" y="190" class="table">subject_setting</text></g>
+  <g><rect x="1100" y="80" width="260" height="100" rx="15" class="entity reference"/><text x="1230" y="122" class="ename">ПРЕДМЕТ</text><text x="1230" y="150" class="table">subject</text></g>
+  <g><rect x="1100" y="330" width="260" height="100" rx="15" class="entity professor"/><text x="1230" y="372" class="ename">ТИП ПРАВИЛА</text><text x="1230" y="400" class="table">rule_type</text></g>
+  <g><rect x="520" y="600" width="280" height="100" rx="15" class="entity student"/><text x="660" y="642" class="ename">ДЕНЬ СЕМЕСТРА</text><text x="660" y="670" class="table">semester_day</text></g>
+  <g><rect x="950" y="600" width="240" height="100" rx="15" class="entity student"/><text x="1070" y="642" class="ename">ЗАНЯТИЕ</text><text x="1070" y="670" class="table">lesson</text></g>
+  <g><rect x="1420" y="500" width="330" height="100" rx="15" class="entity student"/><text x="1585" y="542" class="ename">РЕШЕНИЕ О ПОСЕЩЕНИИ</text><text x="1585" y="570" class="table">attendance_decision</text></g>
+  <g><rect x="1420" y="760" width="330" height="100" rx="15" class="entity history"/><text x="1585" y="802" class="ename">РЕЗУЛЬТАТ ОПРОСА</text><text x="1585" y="830" class="table">question_result</text></g>
+
+</svg>
