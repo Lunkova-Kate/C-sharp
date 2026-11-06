@@ -9,4 +9,6 @@ public class AppOnDBContext : DbContext
     }
 
     public DbSet<SubjectEntity> Subjects => Set<SubjectEntity>();
+    public DbSet<RuleEntity> Rules => Set<RuleEntity>();
+    public DbSet<SemesterEntity> Semesters => Set<SemesterEntity>();
 }

@@ -24,21 +24,36 @@ class Program
                 ?? throw new InvalidOperationException(
                     "Connection string 'MasterOfSkipping' was not found.");
 
-        builder.Services.AddDbContext<AppOnDBContext>(options =>
-            options.UseNpgsql(connectionSetting));
-            var options = new DbContextOptionsBuilder<AppOnDBContext>()
-            .UseNpgsql(connectionSetting);
+        // builder.Services.AddDbContext<AppOnDBContext>(options =>
+        //     options.UseNpgsql(connectionSetting));
+        var options = new DbContextOptionsBuilder<AppOnDBContext>()
+        .UseNpgsql(connectionSetting);
 
-            using(var db =  new AppOnDBContext(options.Options))
+        using (var db = new AppOnDBContext(options.Options))
+        {
+
+            var rules = await db.Rules.ToListAsync();
+            foreach (var rule in rules)
             {
-                var subjects = await db.Subjects.ToListAsync();
-                foreach(var subject in subjects)
-                {
-                    Console.WriteLine($"Code: {subject.Code}, Name: {subject.Name}, Lesson Order: {subject.LessonOrder}");
-                }
-
-                
+                Console.WriteLine($"Code: {rule.Code}, Name: {rule.Name}");
             }
+
+            var subjects = db.Subjects.OrderBy(s => s.LessonOrder).ToList();
+            foreach (var subject in subjects)
+            {
+                Console.WriteLine($"Code: {subject.Code}, Name: {subject.Name}, Lesson Order: {subject.LessonOrder}");
+            }
+            var semesters = await db.Semesters.ToListAsync();
+            Console.WriteLine($"Семестров в базе: {semesters.Count}");
+            // var semestr = new SemesterEntity
+            // {
+            //     Id = Guid.NewGuid(),
+            //     Seed = 12345,
+            // };
+            // db.Semesters.Add(semestr);
+            // await db.SaveChangesAsync();
+            // Console.WriteLine($"Создан семестр: {semestr.Id}");
+        }
 
 
 
