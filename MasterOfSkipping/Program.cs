@@ -28,10 +28,16 @@ class Program
         //     options.UseNpgsql(connectionSetting));
         var options = new DbContextOptionsBuilder<AppOnDBContext>()
         .UseNpgsql(connectionSetting);
-
+        Guid id = Guid.Parse("8003d998-5f4f-4814-a3d4-bf7b9986c3a3");
         using (var db = new AppOnDBContext(options.Options))
         {
-
+           
+           var semesters = await db.SubjectSettings.Where( setting => setting.SemesterId == id).ToListAsync();
+           foreach(var semester in semesters)
+            {
+                Console.WriteLine($"{semester.SemesterId}, {semester.SubjectCode}, {semester.RuleCode}, {semester.DependencyACode}, {semester.DependencyBCode}");
+            
+            }
             // var rules = await db.Rules.ToListAsync();
             // foreach (var rule in rules)
             // {
@@ -52,9 +58,6 @@ class Program
             // };
             // db.Semesters.Add(semestr);
             // await db.SaveChangesAsync();
-            Guid semestrId = Guid.Parse("f606c904-300b-4d04-8468-d187791901bc");
-            var savedSemester =  db.Semesters.SingleOrDefault(seme => seme.Id == semestrId);
-            Console.WriteLine($"Семестр с ID {semestrId} найден: {savedSemester.Id }, Seed: {savedSemester.Seed}, DaysCompleted: {savedSemester.DaysCompleted}, TotalEnjoyment: {savedSemester.TotalEnjoyment}, IsExpelled: {savedSemester.IsExpelled}");
         }
 
 
