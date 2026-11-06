@@ -32,19 +32,19 @@ class Program
         using (var db = new AppOnDBContext(options.Options))
         {
 
-            var rules = await db.Rules.ToListAsync();
-            foreach (var rule in rules)
-            {
-                Console.WriteLine($"Code: {rule.Code}, Name: {rule.Name}");
-            }
+            // var rules = await db.Rules.ToListAsync();
+            // foreach (var rule in rules)
+            // {
+            //     Console.WriteLine($"Code: {rule.Code}, Name: {rule.Name}");
+            // }
 
-            var subjects = db.Subjects.OrderBy(s => s.LessonOrder).ToList();
-            foreach (var subject in subjects)
-            {
-                Console.WriteLine($"Code: {subject.Code}, Name: {subject.Name}, Lesson Order: {subject.LessonOrder}");
-            }
-            var semesters = await db.Semesters.ToListAsync();
-            Console.WriteLine($"Семестров в базе: {semesters.Count}");
+            // var subjects = db.Subjects.OrderBy(s => s.LessonOrder).ToList();
+            // foreach (var subject in subjects)
+            // {
+            //     Console.WriteLine($"Code: {subject.Code}, Name: {subject.Name}, Lesson Order: {subject.LessonOrder}");
+            // }
+            // var semesters = await db.Semesters.ToListAsync();
+            // Console.WriteLine($"Семестров в базе: {semesters.Count}");
             // var semestr = new SemesterEntity
             // {
             //     Id = Guid.NewGuid(),
@@ -52,7 +52,9 @@ class Program
             // };
             // db.Semesters.Add(semestr);
             // await db.SaveChangesAsync();
-            // Console.WriteLine($"Создан семестр: {semestr.Id}");
+            Guid semestrId = Guid.Parse("f606c904-300b-4d04-8468-d187791901bc");
+            var savedSemester =  db.Semesters.SingleOrDefault(seme => seme.Id == semestrId);
+            Console.WriteLine($"Семестр с ID {semestrId} найден: {savedSemester.Id }, Seed: {savedSemester.Seed}, DaysCompleted: {savedSemester.DaysCompleted}, TotalEnjoyment: {savedSemester.TotalEnjoyment}, IsExpelled: {savedSemester.IsExpelled}");
         }
 
 
