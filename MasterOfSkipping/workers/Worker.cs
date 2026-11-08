@@ -20,9 +20,9 @@ public sealed class MyWorker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(5000, stoppingToken);
-            var survived = _semester.ProcessDay();
+            DayResult dayResult = _semester.ProcessDay();
             Console.WriteLine($"Day {_semester.DaysElapsed}: Total Enjoyment: {_semester.TotalEnjoyment}, Average Enjoyment: {_semester.AverageEnjoyment:F2}");
-            if (!survived)
+            if (dayResult.IsExpelled)
             {
                 Console.WriteLine($"Student expelled after {_semester.DaysElapsed} days.");
                 _applicationLifetime.StopApplication();

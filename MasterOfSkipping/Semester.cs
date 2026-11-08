@@ -54,8 +54,8 @@ public class Semester
     {
         while (_daysElapsed < SimulationSettings.DaysInSemester)
         {
-            bool survived = ProcessDay();
-            if (!survived)
+            DayResult dayResult = ProcessDay();
+            if (dayResult.IsExpelled)
             {
                 daysElapsed = _daysElapsed;
                 expelled = true;
@@ -67,7 +67,7 @@ public class Semester
         return _enjoyment;
     }
 
-    public bool ProcessDay()
+    public DayResult ProcessDay()
     {
 
         bool[] attend = _strategy.DecideDay(_daysElapsed, _history);
@@ -102,7 +102,7 @@ public class Semester
                     _enjoyment = 0;
                     _history.RecordSkip(_daysElapsed, (Subject)i);
                     ++_daysElapsed;
-                    return false;
+                    return new DayResult(_daysElapsed, _enjoyment, true, attend, todayAsked, i+1);
                 }
                 else
                 {
@@ -116,7 +116,7 @@ public class Semester
         _enjoyment += SmallPie;
         _yesterdayAsked = todayAsked;
         ++_daysElapsed;
-        return true;
+        return new DayResult(_daysElapsed, _enjoyment, false, attend, todayAsked, todayAsked.Length);
     }
 
 }
