@@ -45,23 +45,20 @@ class Program
             List<SemesterEntity> unfinishedSemesters = await semesterRepo.GetUnfinishedSemestersAsync();
 
 
-            var lastSemester = await semesterRepo.GetSemesterByIdAsync(unfinishedSemesters.Last().Id);
+            var lastSemester = await semesterRepo.GetSemesterByIdAsync(unfinishedSemesters.Last().Id)
+                ?? throw new InvalidOperationException("The selected semester was not found.");
             Console.WriteLine($"DaysCount {lastSemester.SemesterDays.Count}, SUbjectCount {lastSemester.SubjectSettings.Count()}, LessonsCount {lastSemester.SemesterDays.Sum(day => day.Lessons.Count)}");
-            Random lastSemerterRandom = new Random(lastSemester.Seed);
-            Professor[] lastProffesor = ProfessorGenerator.Generate(lastSemerterRandom);
-            MyStrategy laststSemestrStrategy = new MyStrategy();
-            Semester restoreSemester = new Semester(lastProffesor, laststSemestrStrategy);
+            var semesterRestorer = new SemesterRestorer();
+            Semester restoredSemester = semesterRestorer.Restore(
+                lastSemester,
+                new MyStrategy());
 
-            for (var i = 0; i < lastSemester.DaysCompleted; ++i)
-            {
-                restoreSemester.ProcessDay();
-            }
-            // DayResult nextDay = restoreSemester.ProcessDay();
+            // DayResult nextDay = restoredSemester.ProcessDay();
             // await semesterRepo.SaveDayAsync(lastSemester.Id, nextDay);
 
             Console.WriteLine(
-                $"Restored: Days={restoreSemester.DaysElapsed}, " +
-                $"Enjoyment={restoreSemester.TotalEnjoyment}");
+                $"Restored: Days={restoredSemester.DaysElapsed}, " +
+                $"Enjoyment={restoredSemester.TotalEnjoyment}");
 
             Console.WriteLine(
                 $"Database: Days={lastSemester.DaysCompleted}, " +
