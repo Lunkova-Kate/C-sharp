@@ -26,42 +26,40 @@ class Program
 
         // builder.Services.AddDbContext<AppOnDBContext>(options =>
         //     options.UseNpgsql(connectionSetting));
-        var options = new DbContextOptionsBuilder<AppOnDBContext>()
-        .UseNpgsql(connectionSetting);
-        Guid id = Guid.Parse("8003d998-5f4f-4814-a3d4-bf7b9986c3a3");
-        using (var db = new AppOnDBContext(options.Options))
-        {
-           
-           var semesters = await db.SubjectSettings.Where( setting => setting.SemesterId == id).ToListAsync();
-           foreach(var semester in semesters)
-            {
-                Console.WriteLine($"{semester.SemesterId}, {semester.SubjectCode}, {semester.RuleCode}, {semester.DependencyACode}, {semester.DependencyBCode}");
-            
-            }
-            // var rules = await db.Rules.ToListAsync();
-            // foreach (var rule in rules)
-            // {
-            //     Console.WriteLine($"Code: {rule.Code}, Name: {rule.Name}");
-            // }
 
-            // var subjects = db.Subjects.OrderBy(s => s.LessonOrder).ToList();
-            // foreach (var subject in subjects)
-            // {
-            //     Console.WriteLine($"Code: {subject.Code}, Name: {subject.Name}, Lesson Order: {subject.LessonOrder}");
-            // }
-            // var semesters = await db.Semesters.ToListAsync();
-            // Console.WriteLine($"Семестров в базе: {semesters.Count}");
-            // var semestr = new SemesterEntity
-            // {
-            //     Id = Guid.NewGuid(),
-            //     Seed = 12345,
-            // };
-            // db.Semesters.Add(semestr);
-            // await db.SaveChangesAsync();
+
+
+        int seed = 123;
+        Random random = new Random(seed);
+        Professor[] professors = ProfessorGenerator.Generate(random);
+        MyStrategy strategy = new MyStrategy();
+        Semester semester = new Semester(professors, strategy);
+
+        using var _db = new AppOnDBContext(
+            new DbContextOptionsBuilder<AppOnDBContext>()
+                .UseNpgsql(connectionSetting)
+                .Options);
+        {
+            
+            SemesterRepo semesterRepo = new SemesterRepo(_db);
+            var semesterId = await semesterRepo.AddNewSemesterToDatabase(seed, professors);
+            DayResult dayResult = semester.ProcessDay();
+            semesterRepo.SaveDayAsync(semesterId, dayResult);
+
+            Console.WriteLine($"Id semester: {semesterId}, Day: {dayResult.DayNumber}, Enjoyment: {dayResult.TotalEnjoyment}, Expelled: {dayResult.IsExpelled}");
         }
 
 
 
+// builder.Services.AddSingleton(new Random(seed));
+        // builder.Services.AddSingleton<ISkipStrategy, MyStrategy>();
+        // builder.Services.AddSingleton<Semester>(injection =>
+        // {
+        //     var random = injection.GetRequiredService<Random>();
+        //     var strategy = injection.GetRequiredService<ISkipStrategy>();
+        //     var professors = ProfessorGenerator.Generate(random);
+        //     return new Semester(professors, strategy);
+        // });
 
         // int seed;
         // var builder = Host.CreateApplicationBuilder(args);
@@ -93,6 +91,8 @@ class Program
         // IHost host = builder.Build();
         // await host.RunAsync();
 
+
     }
+
 
 }

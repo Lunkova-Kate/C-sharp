@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 namespace MasterOfSkipping;
 
 public class SemesterRepo
@@ -60,4 +61,112 @@ public class SemesterRepo
 
         return semesterId;
     }
+
+
+    SemesterDayEntity CreateSemesterDayEntity(Guid semesterId, DayResult dayResult)
+    {
+       var semesterDayEntity = new SemesterDayEntity
+        {
+            SemesterId = semesterId,
+            TotalEnjoyment = dayResult.TotalEnjoyment,
+            DayNumber = (short)dayResult.DayNumber,
+            IsExpelled = dayResult.IsExpelled
+        };
+
+        return semesterDayEntity;
+    }
+
+    List<LessonEntity> CreateLessonEntities(Guid semesterId, DayResult dayResult)
+    {
+        // var lessonEntities = new List<LessonEntity>();
+
+        // for ( int i =0 ; i< dayResult.ProcessedLessonCount; ++i)
+        // {
+        //     var lessonEntity = new LessonEntity
+        //     {
+        //         SemesterId = semesterId,
+        //         DayNumber = (short)dayResult.DayNumber,
+        //         SubjectCode = DatabaseCodeMapper.SubjectToCode((Subject)i)
+        //     };
+
+        //     lessonEntities.Add(lessonEntity);
+        // }
+        var lessonEntities = Enumerable.Range(0, dayResult.ProcessedLessonCount)
+        .Select(lessonIndex => new LessonEntity
+        {
+                SemesterId = semesterId,
+                DayNumber = (short)dayResult.DayNumber,
+                SubjectCode = DatabaseCodeMapper.SubjectToCode((Subject)lessonIndex)
+            }).ToList();
+  
+
+
+        return lessonEntities;
+    }
+
+    List<AttendDecisionEntity> CreateAttendanceEntities(Guid semesterId, DayResult dayResult)
+    {
+        var attendanceEntities = Enumerable.Range(0, dayResult.ProcessedLessonCount)
+        .Select(lessonIndex => new AttendDecisionEntity
+        {
+            SemesterId = semesterId,
+            DayNumber = (short)dayResult.DayNumber,
+            SubjectCode = DatabaseCodeMapper.SubjectToCode((Subject)lessonIndex),
+            Attended = dayResult.Attendance[lessonIndex]
+        }).ToList();
+
+        return attendanceEntities;
+    }
+
+
+    List<QuestionResultEntity> CreateQuestionResultEntities(Guid semesterId, DayResult dayResult)
+    {
+        var questionResultEntities = Enumerable.Range(0, dayResult.ProcessedLessonCount)
+        .Select(lessonIndex => new QuestionResultEntity
+        {
+            SemesterId = semesterId,
+            DayNumber = (short)dayResult.DayNumber,
+            SubjectCode = DatabaseCodeMapper.SubjectToCode((Subject)lessonIndex),
+            WasAsked = dayResult.Asked[lessonIndex]
+        }).ToList();
+
+        return questionResultEntities;
+    }
+
+    async Task<SemesterEntity?> FindSemesterByIdAsync(Guid semesterId)
+    {
+        var needSemester = await _dbContext
+        .Semesters.SingleOrDefaultAsync(s => s.Id == semesterId);
+
+        return needSemester;
+    }
+
+    void UpdateSemesterProgress(SemesterEntity semesterEntity, DayResult dayResult)
+    {
+        semesterEntity.DaysCompleted = (short)dayResult.DayNumber;
+        semesterEntity.TotalEnjoyment = dayResult.TotalEnjoyment;
+        semesterEntity.IsExpelled = dayResult.IsExpelled;
+    }
+
+    public async Task SaveDayAsync (Guid semesterId, DayResult dayResult)
+    {
+        var currentSemester = await FindSemesterByIdAsync(semesterId);
+        if (currentSemester == null)
+        {
+            throw new InvalidOperationException($"Semester with ID {semesterId} not found.");
+        }
+        UpdateSemesterProgress(currentSemester, dayResult);
+        SemesterDayEntity semesterDayEntity = CreateSemesterDayEntity(semesterId, dayResult);
+        List<LessonEntity> lessonEntities = CreateLessonEntities(semesterId, dayResult);
+        List<AttendDecisionEntity> attendanceEntities = CreateAttendanceEntities(semesterId, dayResult);
+        List<QuestionResultEntity> questionResultEntities = CreateQuestionResultEntities(semesterId, dayResult);
+        _dbContext.SemesterDays.Add(semesterDayEntity);
+        _dbContext.Lessons.AddRange(lessonEntities);
+        _dbContext.AttendDecision.AddRange(attendanceEntities);
+        _dbContext.QuestionResults.AddRange(questionResultEntities);
+
+
+        await _dbContext.SaveChangesAsync();
+    }
+
 }
