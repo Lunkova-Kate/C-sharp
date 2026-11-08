@@ -40,18 +40,53 @@ class Program
                 .UseNpgsql(connectionSetting)
                 .Options);
         {
-            
-            SemesterRepo semesterRepo = new SemesterRepo(_db);
-            var semesterId = await semesterRepo.AddNewSemesterToDatabase(seed, professors);
-            DayResult dayResult = semester.ProcessDay();
-           await semesterRepo.SaveDayAsync(semesterId, dayResult);
 
-            Console.WriteLine($"Id semester: {semesterId}, Day: {dayResult.DayNumber}, Enjoyment: {dayResult.TotalEnjoyment}, Expelled: {dayResult.IsExpelled}");
+            SemesterRepo semesterRepo = new SemesterRepo(_db);
+            List<SemesterEntity> unfinishedSemesters = await semesterRepo.GetUnfinishedSemestersAsync();
+            // foreach (var i in unfinishedSemesters)
+            // {
+            //   Console.WriteLine($"Unfinished semester: Id: {i.Id}, Seed: {i.Seed}, DaysCompleted: {i.DaysCompleted}, TotalEnjoyment: {i.TotalEnjoyment}, IsExpelled: {i.IsExpelled}");
+            // }
+
+            var lastSemester = await semesterRepo.GetSemesterByIdAsync(unfinishedSemesters.Last().Id);
+            // Console.WriteLine($"Last unfinished semester: Id: {lastSemester.Id} and  {lastSemester.SubjectSettings.Count}");
+            Console.WriteLine($"DaysCount {lastSemester.SemesterDays.Count}, SUbjectCount {lastSemester.SubjectSettings.Count()}, LessonsCount {lastSemester.SemesterDays.Sum(day => day.Lessons.Count)}");    
+                  foreach (var day in lastSemester.SemesterDays.OrderBy(day => day.DayNumber))
+{
+    Console.WriteLine(
+        $"Day {day.DayNumber}: " +
+        $"Enjoyment={day.TotalEnjoyment}, " +
+        $"Expelled={day.IsExpelled}");
+
+    foreach (var lesson in day.Lessons.OrderBy(lesson => lesson.SubjectCode))
+    {
+        string attended =
+            lesson.AttendanceDecision?.Attended.ToString() ?? "missing";
+
+        string wasAsked =
+            lesson.QuestionResult?.WasAsked.ToString() ?? "missing";
+
+        Console.WriteLine(
+            $"  {lesson.SubjectCode}: " +
+            $"Attended={attended}, " +
+            $"WasAsked={wasAsked}");
+    }
+}
+             // var semesterId = await semesterRepo.AddNewSemesterToDatabase(seed, professors);
+            // for (int i = 0; i < 5; ++i)
+            // {
+            //     DayResult dayResult = semester.ProcessDay();
+            //     await semesterRepo.SaveDayAsync(semesterId, dayResult);
+            //     Console.WriteLine($"Id semester: {semesterId}, Day: {dayResult.DayNumber}, Enjoyment: {dayResult.TotalEnjoyment}, Expelled: {dayResult.IsExpelled}");
+            // }
+            
+         
+            
         }
 
 
 
-// builder.Services.AddSingleton(new Random(seed));
+        // builder.Services.AddSingleton(new Random(seed));
         // builder.Services.AddSingleton<ISkipStrategy, MyStrategy>();
         // builder.Services.AddSingleton<Semester>(injection =>
         // {

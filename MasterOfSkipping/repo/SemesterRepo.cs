@@ -169,4 +169,28 @@ public class SemesterRepo
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task<List<SemesterEntity>> GetUnfinishedSemestersAsync()
+    {
+        var unfinishedSemesters = await _dbContext.Semesters
+            .Where(s => !s.IsExpelled && s.DaysCompleted < SimulationSettings.DaysInSemester)
+            .ToListAsync();
+
+        return unfinishedSemesters;
+    }
+    public async Task<SemesterEntity?> GetSemesterByIdAsync(Guid semesterId)
+    {
+        var semesterState = await _dbContext.Semesters
+            .AsSplitQuery()
+            .Include(s => s.SubjectSettings)
+            .Include(s => s.SemesterDays)
+                .ThenInclude(day => day.Lessons)
+                    .ThenInclude(lesson => lesson.AttendanceDecision)
+            .Include(s => s.SemesterDays)
+                .ThenInclude(day => day.Lessons)
+                    .ThenInclude(lesson => lesson.QuestionResult)
+            .SingleOrDefaultAsync(s => s.Id == semesterId);
+
+        return semesterState;
+    }
+
 }
