@@ -44,7 +44,7 @@ class Program
             SemesterRepo semesterRepo = new SemesterRepo(_db);
             var semesterId = await semesterRepo.AddNewSemesterToDatabase(seed, professors);
             DayResult dayResult = semester.ProcessDay();
-            semesterRepo.SaveDayAsync(semesterId, dayResult);
+           await semesterRepo.SaveDayAsync(semesterId, dayResult);
 
             Console.WriteLine($"Id semester: {semesterId}, Day: {dayResult.DayNumber}, Enjoyment: {dayResult.TotalEnjoyment}, Expelled: {dayResult.IsExpelled}");
         }
