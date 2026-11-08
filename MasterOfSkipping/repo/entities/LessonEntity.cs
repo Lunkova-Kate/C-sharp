@@ -24,4 +24,11 @@ public class LessonEntity
 
     [Column("subject_code")]
     public string SubjectCode { get; set; } = string.Empty;
+
+    public AttendDecisionEntity? AttendanceDecision { get; set; }
+    public QuestionResultEntity? QuestionResult { get; set; }
+
+    public SemesterDayEntity SemesterDay { get; set; } = null!;
+
+    public SubjectSettingEntity SubjectSetting { get; set; } = null!;
 }

@@ -26,4 +26,6 @@ public class QuestionResultEntity
 
     [Column("was_asked")]
     public bool WasAsked { get; set; }
+    
+    public LessonEntity Lesson { get; set; } = null!;
 }

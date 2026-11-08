@@ -27,4 +27,6 @@ public class AttendDecisionEntity
 
     [Column("attended")]
     public bool Attended { get; set; }
+
+    public LessonEntity Lesson { get; set; } = null!;
 }

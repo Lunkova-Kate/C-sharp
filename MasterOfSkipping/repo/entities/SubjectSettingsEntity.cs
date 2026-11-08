@@ -21,4 +21,12 @@ public class SubjectSettingEntity
 
     [Column("dependency_b_code")]
     public string? DependencyBCode { get; set; }
+
+
+    public List<LessonEntity> Lessons { get; set; } = new List<LessonEntity>();
+    public SemesterEntity Semester { get; set; } = null!;
+    public SubjectEntity Subject { get; set; } = null!;
+    public RuleEntity Rule { get; set; } = null!;
+    public SubjectEntity? DependencyA { get; set; }
+    public SubjectEntity? DependencyB { get; set; }
 }

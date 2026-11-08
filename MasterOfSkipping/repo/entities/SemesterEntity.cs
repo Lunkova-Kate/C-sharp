@@ -22,4 +22,7 @@ public class SemesterEntity
 
     [Column("is_expelled")]
     public bool IsExpelled { get; set; } = false;
+
+    public List<SemesterDayEntity> SemesterDays { get; set; } = new List<SemesterDayEntity>();
+    public List<SubjectSettingEntity> SubjectSettings { get; set; } = new List<SubjectSettingEntity>();
 }

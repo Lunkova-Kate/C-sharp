@@ -19,5 +19,8 @@ public class SemesterDayEntity
 
     [Column("is_expelled")]
     public bool IsExpelled { get; set; } = false;
+
+    public List<LessonEntity> Lessons { get; set; } = new List<LessonEntity>();
     
+    public SemesterEntity Semester { get; set; } = null!;
 }
