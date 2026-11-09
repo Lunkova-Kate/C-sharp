@@ -5,10 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+
 class Program
 {
 
-    private static async Task RunNewAsync(SemesterRepo semesterRepo)
+    private static async Task<SimulationSession> CreateNewSessionAsync(SemesterRepo semesterRepo)
     {
         Console.Write("Enter seed: ");
         string? input = Console.ReadLine();
@@ -36,32 +37,9 @@ class Program
 
         Console.WriteLine($"Created a new semester: {semesterId}");
 
-        while (semester.DaysElapsed <
-               SimulationSettings.DaysInSemester)
-        {
-            DayResult dayResult = semester.ProcessDay();
-
-            await semesterRepo.SaveDayAsync(
-                semesterId,
-                dayResult);
-
-            Console.WriteLine(
-                $"Day: {dayResult.DayNumber}, " +
-                $"Enjoyment: {dayResult.TotalEnjoyment}");
-
-            if (dayResult.IsExpelled)
-            {
-                Console.WriteLine("The student has been expelled.");
-                return;
-            }
-        }
-
-        Console.WriteLine(
-            $"Semester completed. " +
-            $"Total enjoyment: {semester.TotalEnjoyment}, " +
-            $"average: {semester.AverageEnjoyment:F2}");
+        return new SimulationSession(semesterId, semester);
     }
-    private static async Task RunResumeAsync(SemesterRepo semesterRepo)
+    private static async Task<SimulationSession?> RestoreSessionAsync(SemesterRepo semesterRepo)
     {
         List<SemesterEntity> unfinishedSemesters =
             await semesterRepo.GetUnfinishedSemestersAsync();
@@ -69,7 +47,7 @@ class Program
         if (unfinishedSemesters.Count == 0)
         {
             Console.WriteLine("There are no unfinished semesters.");
-            return;
+            return null;
         }
 
         Console.WriteLine("Unfinished semesters:");
@@ -88,7 +66,7 @@ class Program
         if (!Guid.TryParse(input, out Guid semesterId))
         {
             Console.WriteLine("Invalid semester ID.");
-            return;
+            return null;
         }
 
         bool isUnfinishedSemester = unfinishedSemesters
@@ -98,7 +76,7 @@ class Program
         {
             Console.WriteLine(
                 "The selected semester does not exist or is already completed.");
-            return;
+            return null;
         }
 
         SemesterEntity? savedSemester =
@@ -107,7 +85,7 @@ class Program
         if (savedSemester is null)
         {
             Console.WriteLine("The selected semester was not found.");
-            return;
+            return null;
         }
 
         var semesterRestorer = new SemesterRestorer();
@@ -122,30 +100,8 @@ class Program
             $"Days completed: {semester.DaysElapsed}, " +
             $"enjoyment: {semester.TotalEnjoyment}");
 
-        while (semester.DaysElapsed <
-               SimulationSettings.DaysInSemester)
-        {
-            DayResult dayResult = semester.ProcessDay();
 
-            await semesterRepo.SaveDayAsync(
-                semesterId,
-                dayResult);
-
-            Console.WriteLine(
-                $"Day: {dayResult.DayNumber}, " +
-                $"Enjoyment: {dayResult.TotalEnjoyment}");
-
-            if (dayResult.IsExpelled)
-            {
-                Console.WriteLine("The student has been expelled.");
-                return;
-            }
-        }
-
-        Console.WriteLine(
-            $"Semester completed. " +
-            $"Total enjoyment: {semester.TotalEnjoyment}, " +
-            $"average: {semester.AverageEnjoyment:F2}");
+        return new SimulationSession(semesterId, semester);
     }
     static async Task Main(string[] args)
     {
@@ -178,21 +134,32 @@ class Program
 
         await using var dbContext = new AppOnDBContext(options);
         var semesterRepo = new SemesterRepo(dbContext);
-
+        SimulationSession? session = null;
 
         switch (mode)
         {
             case "new":
-                await RunNewAsync(semesterRepo);
+                session = await CreateNewSessionAsync(semesterRepo);
                 break;
             case "resume":
-                await RunResumeAsync(semesterRepo);
+                session = await RestoreSessionAsync(semesterRepo);
                 break;
 
         }
+        if (session is null)
+        {
+            return;
+        }
 
+        builder.Services.AddSingleton(session);
+        builder.Services.AddSingleton(semesterRepo);
 
+        builder.Services.AddHostedService<MyWorker>();
+        builder.Services.AddHostedService<KeyboardStopService>();
 
+        using IHost host = builder.Build();
+
+        await host.RunAsync();
 
     }
 
