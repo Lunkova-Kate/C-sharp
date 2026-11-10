@@ -7,9 +7,13 @@ public class Professor
     private readonly RuleType _rule;
     private readonly Random _random;
 
-
     public Subject Subject { get; }
-
+    public RuleType Rule => _rule;
+    public Subject? DependencyA =>
+        _rule == RuleType.Random50 ? null : _subjectA;
+    public Subject? DependencyB =>
+        _rule == RuleType.XorRule ? _subjectB : null;
+        
     public Professor(Subject subject, RuleType rule, Random random, Subject a = default, Subject b = default)
     {
         Subject = subject;

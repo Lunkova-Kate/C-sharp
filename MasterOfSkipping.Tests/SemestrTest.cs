@@ -30,8 +30,8 @@ public class SemestrTests
         decisions[0] = attendLessons;
         var strategy = new FixedStrategy(decisions);
         var semester = new Semester(professors, strategy);
-        bool actualSurvived = semester.ProcessDay();
-        Assert.Equal(survive, actualSurvived);
+        DayResult dayResult = semester.ProcessDay();
+        Assert.Equal(survive, !dayResult.IsExpelled );
         Assert.Equal(enjoyment, semester.TotalEnjoyment);
         Assert.Equal(1, semester.DaysElapsed);
 
@@ -60,9 +60,9 @@ public class SemestrTests
 
         var semester = new Semester(professors, strategy);
 
-        bool firstDaySurvived = semester.ProcessDay();
+        DayResult firstDayResult = semester.ProcessDay();
 
-        Assert.True(firstDaySurvived);
+        Assert.True(!firstDayResult.IsExpelled);
         Assert.Equal(2, semester.TotalEnjoyment);
         Assert.Equal(1, semester.DaysElapsed);
 

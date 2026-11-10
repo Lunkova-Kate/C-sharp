@@ -56,7 +56,7 @@ public class ProfessorGeneratorTests
     {
         int[] randomValues =
         [
-            
+
         (int)RuleType.XorRule,
         (int)Subject.Calculus,
         (int)Subject.Calculus,
