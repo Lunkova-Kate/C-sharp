@@ -2,6 +2,7 @@ using MasterOfSkipping.HistoryService.Contracts;
 using Microsoft.EntityFrameworkCore;
 using MasterOfSkipping.HistoryService.Data;
 using MasterOfSkipping.HistoryService.Data.Entities;
+using MasterOfSkipping.HistoryService.Endpoints;
 
 
 
@@ -14,24 +15,7 @@ builder.Services.AddDbContext<HistoryDbContext> (option =>
 var app = builder.Build();
 
 
-app.MapPost("/semesters", async (CreateSemesterRequest request, HistoryDbContext dbContext) =>
-{
-    int seed = request.Seed ?? Random.Shared.Next();
-    Guid semesterId = Guid.NewGuid();
-    var newSemester = new SemesterEntity
-    {
-        Id = semesterId,
-        Seed = seed
-    };
-    dbContext.Semesters.Add(newSemester);
-    await dbContext.SaveChangesAsync();
-    string location = $"/semesters/{semesterId}";
-    var response = new CreateSemesterResponse(semesterId, seed);
-    return Results.Created(location, response);
-   
-    // return Results.Created(located, response)
-    
-});
+app.MapSemesterEndpoints();
 
 
 app.MapGet("/health/database", async (HistoryDbContext dbContext) => new
