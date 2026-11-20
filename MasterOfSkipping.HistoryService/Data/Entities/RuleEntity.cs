@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasterOfSkipping;
+namespace MasterOfSkipping.HistoryService.Data.Entities;
 
 [Table("rule_type")] 
 public class RuleEntity

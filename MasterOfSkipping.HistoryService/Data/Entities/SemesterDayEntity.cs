@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasterOfSkipping;
+namespace MasterOfSkipping.HistoryService.Data.Entities;
 
 [PrimaryKey(nameof(SemesterId), nameof(DayNumber))]
 [Table("semester_day")]

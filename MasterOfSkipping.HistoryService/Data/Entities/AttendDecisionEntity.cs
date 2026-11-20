@@ -1,16 +1,7 @@
-// attendance_decision (
-//         semester_id uuid NOT NULL,
-//         day_number smallint NOT NULL,
-//         subject_code varchar(32) NOT NULL,
-//         attended boolean NOT NULL,
-//         CONSTRAINT pk_attendance_decision PRIMARY KEY (semester_id, day_number, subject_code),
-//         CONSTRAINT fk_attendance_decision_lesson FOREIGN KEY (semester_id, day_number, subject_code) REFERENCES lesson (semester_id, day_number, subject_code) ON DELETE CASCADE
-//     );
-
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasterOfSkipping;
+namespace MasterOfSkipping.HistoryService.Data.Entities;
 
 [PrimaryKey(nameof(SemesterId), nameof(DayNumber), nameof(SubjectCode))]
 [Table("attendance_decision")]

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasterOfSkipping;
+namespace MasterOfSkipping.HistoryService.Data.Entities;
 
 [Table("subject_setting")]
 [PrimaryKey(nameof(SemesterId), nameof(SubjectCode))]

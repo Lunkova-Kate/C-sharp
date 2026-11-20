@@ -1,16 +1,7 @@
-// question_result (
-//         semester_id uuid NOT NULL,
-//         day_number smallint NOT NULL,
-//         subject_code varchar(32) NOT NULL,
-//         was_asked boolean NOT NULL,
-//         CONSTRAINT pk_question_result PRIMARY KEY (semester_id, day_number, subject_code),
-//         CONSTRAINT fk_question_result_lesson FOREIGN KEY (semester_id, day_number, subject_code) REFERENCES lesson (semester_id, day_number, subject_code) ON DELETE CASCADE
-//     );
-
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasterOfSkipping;
+namespace MasterOfSkipping.HistoryService.Data.Entities;
 [PrimaryKey(nameof(SemesterId), nameof(DayNumber), nameof(SubjectCode))]
 [Table("question_result")]
 public class QuestionResultEntity
