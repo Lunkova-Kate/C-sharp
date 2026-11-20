@@ -1,7 +1,4 @@
 namespace MasterOfSkipping.HistoryService.Contracts;
 
 
-public sealed record CreateSemesterResponse(Guid SemesterId, int? Seed)
-{
-    
-}
+public sealed record CreateSemesterResponse(Guid SemesterId, int? Seed);
