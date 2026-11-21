@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MasterOfSkipping.HistoryService.Data;
 using MasterOfSkipping.HistoryService.Data.Entities;
 using MasterOfSkipping.HistoryService.Endpoints;
+using MasterOfSkipping.HistoryService.Services;
 
 
 
@@ -12,10 +13,13 @@ builder.Services.AddDbContext<HistoryDbContext> (option =>
 {
     option.UseNpgsql(connectionString);
 } );
+
+builder.Services.AddSingleton<ProfessorSettingsGenerator>();
 var app = builder.Build();
 
 
 app.MapSemesterEndpoints();
+app.MapHistoryEndpoints();
 
 
 app.MapGet("/health/database", async (HistoryDbContext dbContext) => new
