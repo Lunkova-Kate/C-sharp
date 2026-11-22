@@ -10,6 +10,111 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+        test:
+          - CMD-SHELL
+          - pg_isready -U postgres -d master_of_skipping
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+  history:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.HistoryService/Dockerfile
+    image: master-of-skipping-history
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__HistoryDatabase: "Host=postgres;Port=5432;Database=master_of_skipping;Username=postgres;Password=postgres"
+    ports:
+      - "5106:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  professor-calculus:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "CALCULUS"
+    ports:
+      - "5201:8080"
+    depends_on:
+      - history
+
+  professor-linear-algebra:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "LINEAR_ALGEBRA"
+    ports:
+      - "5202:8080"
+    depends_on:
+      - history
+
+  professor-discrete-math:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "DISCRETE_MATH"
+    ports:
+      - "5203:8080"
+    depends_on:
+      - history
+
+  professor-programming:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "PROGRAMMING"
+    ports:
+      - "5204:8080"
+    depends_on:
+      - history
+
+  professor-physics:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "PHYSICS"
+    ports:
+      - "5205:8080"
+    depends_on:
+      - history
+
+  professor-english:
+    build:
+      context: .
+      dockerfile: MasterOfSkipping.ProfessorService/Dockerfile
+    image: master-of-skipping-professor
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      HistoryService__BaseUrl: "http://history:8080"
+      Professor__SubjectCode: "ENGLISH"
+    ports:
+      - "5206:8080"
+    depends_on:
+      - history
 
 volumes:
   postgres_data:
