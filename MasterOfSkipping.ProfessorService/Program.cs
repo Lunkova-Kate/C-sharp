@@ -1,4 +1,6 @@
 using MasterOfSkipping.ProfessorService.Clients;
+using MasterOfSkipping.ProfessorService.Services;
+using MasterOfSkipping.ProfessorService.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,7 @@ builder.Services.AddHttpClient("HistoryService", client =>
     client.BaseAddress = new Uri(historyServiceUrl);
 });
 builder.Services.AddScoped<HistoryClient>();
+builder.Services.AddSingleton<ProfessorRule>();
 
 var app = builder.Build();
 
@@ -28,7 +31,7 @@ app.MapGet("/health", () => new
     Service = "Professor",
     SubjectCode = subjectCode
 });
-
+app.MapProfessorEndpoints(subjectCode);
 
 
 app.Run();

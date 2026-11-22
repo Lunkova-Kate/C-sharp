@@ -55,4 +55,20 @@ public sealed class HistoryClient
 
         return questions ?? [];
     }
+
+
+
+    public async Task SaveLessonAsync(
+    Guid semesterId,
+    int day,
+    SaveLessonRequest request)
+    {
+        string path =
+            $"/semesters/{semesterId}/days/{day}/lessons";
+
+        using HttpResponseMessage response =
+            await _httpClient.PostAsJsonAsync(path, request);
+
+        response.EnsureSuccessStatusCode();
+    }
 }
