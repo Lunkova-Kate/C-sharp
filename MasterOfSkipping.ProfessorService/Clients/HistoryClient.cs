@@ -29,11 +29,25 @@ public sealed class HistoryClient
 
 
     public async Task<List<QuestionResponse>> GetQuestionsAsync(
-    Guid semesterId,
-    int day)
+     Guid semesterId,
+     int day,
+     IReadOnlyCollection<string> subjectCodes)
     {
+        if (subjectCodes.Count is < 1 or > 2 ||
+            subjectCodes.Any(string.IsNullOrWhiteSpace))
+        {
+            throw new ArgumentException(
+                "One or two subject codes are required.",
+                nameof(subjectCodes));
+        }
+
+        string query = string.Join(
+            "&",
+            subjectCodes.Select(subjectCode =>
+                $"subjects={Uri.EscapeDataString(subjectCode)}"));
+
         string path =
-            $"/semesters/{semesterId}/days/{day}/questions";
+            $"/semesters/{semesterId}/days/{day}/questions?{query}";
 
         List<QuestionResponse>? questions =
             await _httpClient
