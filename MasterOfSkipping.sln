@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterOfSkipping.HistorySer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterOfSkipping.ProfessorService", "MasterOfSkipping.ProfessorService\MasterOfSkipping.ProfessorService.csproj", "{564053AA-870E-4BD9-9C13-15BC37369E5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterOfSkipping.StudentService", "MasterOfSkipping.StudentService\MasterOfSkipping.StudentService.csproj", "{2B4963F6-86C7-4FB9-869D-FD71C71644EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{564053AA-870E-4BD9-9C13-15BC37369E5B}.Release|x64.Build.0 = Release|Any CPU
 		{564053AA-870E-4BD9-9C13-15BC37369E5B}.Release|x86.ActiveCfg = Release|Any CPU
 		{564053AA-870E-4BD9-9C13-15BC37369E5B}.Release|x86.Build.0 = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|x64.Build.0 = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Debug|x86.Build.0 = Debug|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|x64.ActiveCfg = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|x64.Build.0 = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B4963F6-86C7-4FB9-869D-FD71C71644EA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
