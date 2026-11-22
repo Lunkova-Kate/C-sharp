@@ -117,12 +117,28 @@ public static class HistoryEndpoints
         app.MapGet("/semesters/{semesterId:guid}/days/{day:int}/questions", async (
             Guid semesterId,
             int day,
+            string[] subjects,
             HistoryDbContext dbContext) =>
         {
             if (day is < 1 or > 100)
             {
                 return Results.BadRequest(new { Error = "Day must be between 1 and 100." });
             }
+
+            if (subjects.Length is < 1 or > 2 ||
+                subjects.Any(string.IsNullOrWhiteSpace))
+            {
+                return Results.BadRequest(new
+                {
+                    Error = "Specify one or two subjects."
+                });
+            }
+            string[] normalizedSubjects = subjects.Select(subject => subject.Trim()
+                .ToUpperInvariant())
+                .Distinct()
+                .ToArray();
+
+
 
             SemesterEntity? semester = await dbContext.Semesters
                 .AsNoTracking()
@@ -142,7 +158,8 @@ public static class HistoryEndpoints
                 .AsNoTracking()
                 .Where(question =>
                     question.SemesterId == semesterId &&
-                    question.DayNumber == day)
+                    question.DayNumber == day &&
+                    normalizedSubjects.Contains(question.SubjectCode))
                 .OrderBy(question => question.SubjectCode)
                 .Select(question => new QuestionResponse(
                     question.SubjectCode,
