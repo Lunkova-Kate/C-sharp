@@ -28,6 +28,36 @@ public sealed class HistoryClient
             "History Service returned an empty semester response.");
     }
 
+    public async Task<List<SemesterStateResponse>> GetUnfinishedSemestersAsync(
+        CancellationToken cancellationToken = default)
+    {
+        List<SemesterStateResponse>? semesters = await _httpClient
+            .GetFromJsonAsync<List<SemesterStateResponse>>(
+                "/semesters/unfinished",
+                cancellationToken);
+
+        return semesters ?? [];
+    }
+
+    public async Task<SemesterStateResponse?> GetSemesterAsync(
+        Guid semesterId,
+        CancellationToken cancellationToken = default)
+    {
+        using HttpResponseMessage response = await _httpClient.GetAsync(
+            $"/semesters/{semesterId}",
+            cancellationToken);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content
+            .ReadFromJsonAsync<SemesterStateResponse>(cancellationToken);
+    }
+
     public async Task StartDayAsync(
         Guid semesterId,
         int day,

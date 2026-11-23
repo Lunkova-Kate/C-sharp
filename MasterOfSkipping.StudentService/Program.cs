@@ -5,11 +5,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+if (args.Length == 0)
+{
+    Console.WriteLine("Specify a mode: new or resume.");
+    return;
+}
+
+string mode = args[0].ToLowerInvariant();
+
+if (mode is not "new" and not "resume")
+{
+    Console.WriteLine(
+        $"Unknown mode '{args[0]}'. Specify either new or resume.");
+    return;
+}
+
+string[] configurationArgs = args.Skip(1).ToArray();
+
 HostApplicationBuilder builder =
     Host.CreateApplicationBuilder(
         new HostApplicationBuilderSettings
         {
-            Args = args,
+            Args = configurationArgs,
             ContentRootPath = AppContext.BaseDirectory
         });
 
@@ -57,12 +74,21 @@ builder.Services.AddSingleton<StudentRunner>();
 
 using IHost host = builder.Build();
 
-int? seed = builder.Configuration.GetValue<int?>("Semester:Seed");
 StudentRunner runner = host.Services.GetRequiredService<StudentRunner>();
 
 try
 {
-    await runner.RunAsync(seed);
+    switch (mode)
+    {
+        case "new":
+            int? seed = builder.Configuration.GetValue<int?>("Semester:Seed");
+            await runner.RunNewAsync(seed);
+            break;
+
+        case "resume":
+            await runner.ResumeAsync();
+            break;
+    }
 }
 catch (HttpRequestException exception)
 {
