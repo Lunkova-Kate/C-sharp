@@ -67,7 +67,21 @@ public sealed class HistoryClient
             $"/semesters/{semesterId}/days/{day}", null, cancellationToken);
         response.EnsureSuccessStatusCode();
     }
+    public async Task<DayStatusResponse> GetDayStatusAsync(
+        Guid semesterId,
+        int day,
+        CancellationToken cancellationToken = default)
+    {
+        using HttpResponseMessage response = await _httpClient.GetAsync($"/semesters/{semesterId}/days/{day}/status",
+                cancellationToken);
 
+        response.EnsureSuccessStatusCode();
+
+        DayStatusResponse? status = await response.Content.ReadFromJsonAsync<DayStatusResponse>(cancellationToken);
+
+        return status ?? throw new InvalidOperationException(
+        "History Service returned an empty day status response.");
+    }
     public async Task<List<HistoryLessonResponse>> GetHistoryAsync(
         Guid semesterId,
         int beforeDay,
