@@ -24,24 +24,99 @@ public sealed class StudentRunner
         _strategy = strategy;
     }
 
-    public async Task RunAsync(
+    public async Task RunNewAsync(
         int? seed,
         CancellationToken cancellationToken = default)
     {
         CreateSemesterResponse semester = await _historyClient
             .CreateSemesterAsync(seed, cancellationToken);
 
-        int totalEnjoyment = 0;
         Console.WriteLine(
             $"Semester started: {semester.SemesterId}, seed: {semester.Seed}");
 
-        for (int day = 1; day <= DaysInSemester; ++day)
+        await RunSemesterAsync(
+            semester.SemesterId,
+            firstDay: 1,
+            initialEnjoyment: 0,
+            cancellationToken);
+    }
+
+    public async Task ResumeAsync(
+        CancellationToken cancellationToken = default)
+    {
+        List<SemesterStateResponse> unfinishedSemesters = await _historyClient
+            .GetUnfinishedSemestersAsync(cancellationToken);
+
+        if (unfinishedSemesters.Count == 0)
+        {
+            Console.WriteLine("There are no unfinished semesters.");
+            return;
+        }
+
+        Console.WriteLine("Unfinished semesters:");
+
+        foreach (SemesterStateResponse semester in unfinishedSemesters)
+        {
+            Console.WriteLine(
+                $"ID: {semester.SemesterId}, " +
+                $"days completed: {semester.DaysCompleted}, " +
+                $"enjoyment: {semester.TotalEnjoyment}");
+        }
+
+        Console.Write("Enter semester ID: ");
+        string? input = Console.ReadLine();
+
+        if (!Guid.TryParse(input, out Guid semesterId))
+        {
+            Console.WriteLine("Invalid semester ID.");
+            return;
+        }
+
+        bool canBeResumed = unfinishedSemesters.Any(
+            semester => semester.SemesterId == semesterId);
+
+        if (!canBeResumed)
+        {
+            Console.WriteLine(
+                "The selected semester does not exist or cannot be resumed.");
+            return;
+        }
+
+        SemesterStateResponse? semesterState = await _historyClient
+            .GetSemesterAsync(semesterId, cancellationToken);
+
+        if (semesterState is null)
+        {
+            Console.WriteLine("The selected semester was not found.");
+            return;
+        }
+
+        Console.WriteLine(
+            $"Semester resumed. Days completed: {semesterState.DaysCompleted}, " +
+            $"enjoyment: {semesterState.TotalEnjoyment}");
+
+        await RunSemesterAsync(
+            semesterId,
+            firstDay: semesterState.DaysCompleted + 1,
+            initialEnjoyment: semesterState.TotalEnjoyment,
+            cancellationToken);
+    }
+
+    private async Task RunSemesterAsync(
+        Guid semesterId,
+        int firstDay,
+        int initialEnjoyment,
+        CancellationToken cancellationToken)
+    {
+        int totalEnjoyment = initialEnjoyment;
+
+        for (int day = firstDay; day <= DaysInSemester; ++day)
         {
             await _historyClient.StartDayAsync(
-                semester.SemesterId, day, cancellationToken);
+                semesterId, day, cancellationToken);
 
             List<HistoryLessonResponse> history = await _historyClient
-                .GetHistoryAsync(semester.SemesterId, day, cancellationToken);
+                .GetHistoryAsync(semesterId, day, cancellationToken);
 
             bool[] attendance = _strategy.DecideDay(day, history);
             bool isExpelled = false;
@@ -55,7 +130,7 @@ public sealed class StudentRunner
 
                 AskProfessorResponse result = await _professorClient.AskAsync(
                     subjectCode,
-                    semester.SemesterId,
+                    semesterId,
                     day,
                     attended,
                     cancellationToken);
@@ -90,7 +165,7 @@ public sealed class StudentRunner
             }
 
             SemesterStateResponse state = await _historyClient.CompleteDayAsync(
-                semester.SemesterId,
+                semesterId,
                 day,
                 totalEnjoyment,
                 isExpelled,
