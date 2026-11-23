@@ -1,5 +1,6 @@
 using MasterOfSkipping.ProfessorService.Clients;
 using MasterOfSkipping.ProfessorService.Contracts.History;
+using MasterOfSkipping.ProfessorService.Contracts.Messaging;
 using MasterOfSkipping.ProfessorService.Contracts.Student;
 using MasterOfSkipping.ProfessorService.Services;
 
@@ -14,7 +15,9 @@ public static class ProfessorEndpoints
         app.MapPost("/ask", async (
     StudentRequest request,
     HistoryClient historyClient,
-    ProfessorRule professorRule) =>
+    ProfessorRule professorRule,
+    LessonResultPublisher publisher,
+    CancellationToken cancellationToken) =>
 {
     if (request.Day is < 1 or > 100)
     {
@@ -47,8 +50,17 @@ public static class ProfessorEndpoints
 
     bool wasAsked = professorRule.ShouldAsk(
     request.Day, setting, questions);
-    var lessonRequest = new SaveLessonRequest(subjectCode, request.Attended, wasAsked);
-    await historyClient.SaveLessonAsync(request.SemesterId, request.Day, lessonRequest);
+
+    var message = new LessonResultMessage(
+        Guid.NewGuid(),
+        request.SemesterId,
+        request.Day,
+        subjectCode,
+        request.Attended,
+        wasAsked);
+
+    await publisher.PublishAsync(message, cancellationToken);
+
     var response = new StudentResponse(subjectCode, wasAsked);
 
     return Results.Ok(response);
