@@ -23,6 +23,11 @@ builder.Services.AddHttpClient("HistoryService", client =>
 builder.Services.AddScoped<HistoryClient>();
 builder.Services.AddSingleton<ProfessorRule>();
 
+
+builder.Services.AddSingleton<LessonResultPublisher>();
+builder.Services.AddHostedService(serviceProvider =>
+    serviceProvider.GetRequiredService<LessonResultPublisher>());
+
 var app = builder.Build();
 
 app.MapGet("/health", () => new
