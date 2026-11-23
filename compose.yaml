@@ -46,10 +46,17 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       ConnectionStrings__HistoryDatabase: "Host=postgres;Port=5432;Database=master_of_skipping;Username=postgres;Password=postgres"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5106:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   professor-calculus:
@@ -61,10 +68,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "CALCULUS"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5201:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   professor-linear-algebra:
     build:
@@ -75,10 +90,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "LINEAR_ALGEBRA"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5202:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   professor-discrete-math:
     build:
@@ -89,10 +112,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "DISCRETE_MATH"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5203:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   professor-programming:
     build:
@@ -103,10 +134,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "PROGRAMMING"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5204:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   professor-physics:
     build:
@@ -117,10 +156,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "PHYSICS"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5205:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   professor-english:
     build:
@@ -131,10 +178,18 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       HistoryService__BaseUrl: "http://history:8080"
       Professor__SubjectCode: "ENGLISH"
+      RabbitMq__HostName: "rabbitmq"
+      RabbitMq__Port: "5672"
+      RabbitMq__UserName: "guest"
+      RabbitMq__Password: "guest"
+      RabbitMq__QueueName: "lesson-results"
     ports:
       - "5206:8080"
     depends_on:
-      - history
+      history:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   postgres_data:
