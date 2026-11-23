@@ -121,6 +121,8 @@ public sealed class StudentRunner
             bool[] attendance = _strategy.DecideDay(day, history);
             bool isExpelled = false;
 
+            int processedLessonCount = 0;
+
             for (int subjectIndex = 0;
                  subjectIndex < SubjectCatalog.Codes.Length;
                  ++subjectIndex)
@@ -143,7 +145,8 @@ public sealed class StudentRunner
                     throw new InvalidOperationException(
                         $"Expected {subjectCode}, but professor returned {result.SubjectCode}.");
                 }
-
+                ++processedLessonCount;
+                
                 if (!attended && result.WasAsked)
                 {
                     totalEnjoyment = 0;
@@ -163,6 +166,12 @@ public sealed class StudentRunner
             {
                 totalEnjoyment += PieEnjoyment;
             }
+
+            await WaitForDayResultsAsync(
+                semesterId,
+                day,
+                processedLessonCount,
+                cancellationToken);
 
             SemesterStateResponse state = await _historyClient.CompleteDayAsync(
                 semesterId,
@@ -186,5 +195,59 @@ public sealed class StudentRunner
         Console.WriteLine(
             $"Semester completed. Total enjoyment: {totalEnjoyment}, " +
             $"average: {(double)totalEnjoyment / DaysInSemester:F2}.");
+    }
+
+
+    private async Task WaitForDayResultsAsync(
+    Guid semesterId,
+    int day,
+    int expectedLessonCount,
+    CancellationToken cancellationToken)
+    {
+        using CancellationTokenSource timeoutSource =
+            CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken);
+
+        timeoutSource.CancelAfter(
+            TimeSpan.FromSeconds(15));
+
+        try
+        {
+            while (true)
+            {
+                DayStatusResponse status =
+                    await _historyClient.GetDayStatusAsync(
+                        semesterId,
+                        day,
+                        timeoutSource.Token);
+
+                if (status.SavedLessonCount ==
+                    expectedLessonCount)
+                {
+                    return;
+                }
+
+                if (status.SavedLessonCount >
+                    expectedLessonCount)
+                {
+                    throw new InvalidOperationException(
+                        $"Expected {expectedLessonCount} lesson results, " +
+                        $"but History Service contains " +
+                        $"{status.SavedLessonCount}.");
+                }
+
+                await Task.Delay(
+                    TimeSpan.FromMilliseconds(200),
+                    timeoutSource.Token);
+            }
+        }
+        catch (OperationCanceledException)
+            when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new TimeoutException(
+                $"History Service did not save " +
+                $"{expectedLessonCount} lesson results " +
+                $"for day {day} within 15 seconds.");
+        }
     }
 }
