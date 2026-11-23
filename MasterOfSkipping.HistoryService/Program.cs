@@ -15,6 +15,8 @@ builder.Services.AddDbContext<HistoryDbContext> (option =>
 } );
 
 builder.Services.AddSingleton<ProfessorSettingsGenerator>();
+builder.Services.AddScoped<LessonResultWriter>();
+
 var app = builder.Build();
 
 
