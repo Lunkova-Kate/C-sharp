@@ -153,6 +153,52 @@ public static class SemesterEndpoints
             return Results.Created(location, response);
         });
 
+        app.MapGet("/semesters/{semesterId:guid}/days/{day:int}/status",
+            async (
+                Guid semesterId,
+                int day,
+                HistoryDbContext dbContext) =>
+            {
+                if (day is < 1 or > 100)
+                {
+                    return Results.BadRequest(new
+                    {
+                        Error = "Day must be between 1 and 100."
+                    });
+                }
+
+                SemesterEntity? semester =
+                    await dbContext.Semesters.FindAsync(semesterId);
+
+                SemesterDayEntity? semesterDay =
+                    await dbContext.SemesterDays.FindAsync(
+                        semesterId,
+                        (short)day);
+
+                if (semester is null || semesterDay is null)
+                {
+                    return Results.NotFound();
+                }
+
+                int savedLessonCount =
+                    await dbContext.Lessons.CountAsync(
+                        lesson =>
+                            lesson.SemesterId == semesterId &&
+                            lesson.DayNumber == day);
+
+                bool isCompleted =
+                    semester.DaysCompleted >= day;
+
+                var response = new DayStatusResponse(
+                    semesterId,
+                    day,
+                    savedLessonCount,
+                    isCompleted);
+
+                return Results.Ok(response);
+            });
+
+
         app.MapPut("/semesters/{semesterId:guid}/days/{day:int}", async (
             Guid semesterId,
             int day,
