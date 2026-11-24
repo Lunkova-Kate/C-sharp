@@ -1,44 +1,32 @@
 namespace MasterOfSkipping;
 
-public class MyStrategy : ISkipStrategy
+public sealed class MyStrategy : ISkipStrategy
 {
-    public string Name => "My Strategy";
-
     private const int SubjectCount = 6;
     private const int HypothesisCount = 21;
     private const int MinimumObservationDays = 10;
-    private static readonly byte[] SubjectsUsedByHypothesis;
+    private const int AllHypothesesMask = (1 << HypothesisCount) - 1;
+    private const int AskedStateCount = 1 << SubjectCount;
 
-    static MyStrategy()
+    private static readonly byte[] SubjectsUsedByHypothesis = BuildHypotheses();
+
+    private static readonly int[] AskingHypothesesByState =
+        BuildAskingHypothesesByState();
+
+    private readonly int[] _possibleHypotheses = new int[SubjectCount];
+
+    private readonly bool[] _decision = new bool[SubjectCount];
+
+    private IReadOnlyStudentHistory? _currentHistory;
+    private int _processedDays;
+    private byte _askedYesterday;
+
+    public MyStrategy()
     {
-        SubjectsUsedByHypothesis = new byte[HypothesisCount];
-        int hypothesisIndex = 0;
-
-        for (int subjectIndex = 0; subjectIndex < SubjectCount; ++subjectIndex)
-        {
-            SubjectsUsedByHypothesis[hypothesisIndex++] =
-                (byte)(1 << subjectIndex);
-        }
-
-        for (int firstSubject = 0; firstSubject < SubjectCount; ++firstSubject)
-        {
-            for (int secondSubject = firstSubject + 1;
-                 secondSubject < SubjectCount;
-                 ++secondSubject)
-            {
-                SubjectsUsedByHypothesis[hypothesisIndex++] =
-                    (byte)((1 << firstSubject) | (1 << secondSubject));
-            }
-        }
+        Reset(null);
     }
 
-    private static bool Predict(byte askedYesterday, byte hypothesis)
-    {
-        int matchingAskedSubjects = askedYesterday & hypothesis;
-
-        return matchingAskedSubjects != 0 &&
-               (matchingAskedSubjects & (matchingAskedSubjects - 1)) == 0;
-    }
+    public string Name => "My Strategy";
 
     public bool[] DecideDay(int currentDay, IReadOnlyStudentHistory history)
     {
@@ -51,106 +39,158 @@ public class MyStrategy : ISkipStrategy
                 "Day cannot be negative.");
         }
 
-        bool[] shouldAttend = new bool[SubjectCount];
+        bool differentHistory =
+            _currentHistory is not null &&
+            !ReferenceEquals(_currentHistory, history);
 
-        if (currentDay == 0)
+        if (currentDay == 0 || differentHistory || currentDay < _processedDays)
         {
-            Array.Fill(shouldAttend, true);
-            return shouldAttend;
+            Reset(history);
+        }
+        else if (_currentHistory is null)
+        {
+            _currentHistory = history;
         }
 
-        
-        byte[] askedSubjectsByDay = new byte[currentDay];
+        ProcessNewDays(currentDay, history);
 
-        for (int observedDay = 0; observedDay < currentDay; ++observedDay)
+        if (currentDay < MinimumObservationDays)
         {
-            byte askedSubjects = 0;
+            Array.Fill(_decision, true);
+            return _decision;
+        }
 
-            for (int subjectIndex = 0; subjectIndex < SubjectCount; ++subjectIndex)
+        int askingToday = AskingHypothesesByState[_askedYesterday];
+
+        for (int subject = 0; subject < SubjectCount; subject++)
+        {
+            int possible = _possibleHypotheses[subject];
+
+            bool allPossibleRulesPredictNoQuestion =
+                possible != 0 &&
+                (possible & askingToday) == 0;
+
+            _decision[subject] = !allPossibleRulesPredictNoQuestion;
+        }
+
+        return _decision;
+    }
+
+    private void ProcessNewDays(
+        int currentDay,
+        IReadOnlyStudentHistory history)
+    {
+        while (_processedDays < currentDay)
+        {
+            byte askedToday = ReadAskedMask(_processedDays, history);
+            int askingHypotheses =
+                AskingHypothesesByState[_askedYesterday];
+            int notAskingHypotheses =
+                AllHypothesesMask ^ askingHypotheses;
+
+            for (int subject = 0; subject < SubjectCount; subject++)
             {
-                Subject subject = (Subject)subjectIndex;
+                bool wasAsked =
+                    (askedToday & (1 << subject)) != 0;
 
-                if (history.Attended(observedDay, subject) &&
-                    history.WasAsked(observedDay, subject) == true)
+                _possibleHypotheses[subject] &= wasAsked
+                    ? askingHypotheses
+                    : notAskingHypotheses;
+            }
+
+            _askedYesterday = askedToday;
+            _processedDays++;
+        }
+    }
+
+    private static byte ReadAskedMask(
+        int day,
+        IReadOnlyStudentHistory history)
+    {
+        byte asked = 0;
+
+        for (int subjectIndex = 0;
+             subjectIndex < SubjectCount;
+             subjectIndex++)
+        {
+            var subject = (Subject)subjectIndex;
+
+            if (history.Attended(day, subject) &&
+                history.WasAsked(day, subject) == true)
+            {
+                asked |= (byte)(1 << subjectIndex);
+            }
+        }
+
+        return asked;
+    }
+
+    private void Reset(IReadOnlyStudentHistory? history)
+    {
+        _currentHistory = history;
+        _processedDays = 0;
+        _askedYesterday = 0;
+        Array.Fill(_possibleHypotheses, AllHypothesesMask);
+        Array.Fill(_decision, true);
+    }
+
+    private static bool Predict(byte askedYesterday, byte hypothesis)
+    {
+        int matchingAskedSubjects = askedYesterday & hypothesis;
+
+        return matchingAskedSubjects != 0 &&
+               (matchingAskedSubjects & (matchingAskedSubjects - 1)) == 0;
+    }
+
+    private static byte[] BuildHypotheses()
+    {
+        var hypotheses = new byte[HypothesisCount];
+        int index = 0;
+
+        for (int subject = 0; subject < SubjectCount; subject++)
+        {
+            hypotheses[index++] = (byte)(1 << subject);
+        }
+
+        for (int first = 0; first < SubjectCount; first++)
+        {
+            for (int second = first + 1;
+                 second < SubjectCount;
+                 second++)
+            {
+                hypotheses[index++] =
+                    (byte)((1 << first) | (1 << second));
+            }
+        }
+
+        return hypotheses;
+    }
+
+    private static int[] BuildAskingHypothesesByState()
+    {
+        var result = new int[AskedStateCount];
+
+        for (int askedState = 0;
+             askedState < AskedStateCount;
+             askedState++)
+        {
+            int askingHypotheses = 0;
+
+            for (int hypothesisIndex = 0;
+                 hypothesisIndex < HypothesisCount;
+                 hypothesisIndex++)
+            {
+                if (Predict(
+                        (byte)askedState,
+                        SubjectsUsedByHypothesis[hypothesisIndex]))
                 {
-                    askedSubjects |= (byte)(1 << subjectIndex);
+                    askingHypotheses |= 1 << hypothesisIndex;
                 }
             }
 
-            askedSubjectsByDay[observedDay] = askedSubjects;
+            result[askedState] = askingHypotheses;
         }
 
-        byte askedYesterday = askedSubjectsByDay[currentDay - 1];
-
-        for (int currentSubject = 0;
-             currentSubject < SubjectCount;
-             ++currentSubject)
-        {
-        
-            int possibleHypotheses = (1 << HypothesisCount) - 1;
-
-            for (int observedDay = 0; observedDay < currentDay; ++observedDay)
-            {
-                byte askedOnPreviousDay = observedDay == 0
-                    ? (byte)0
-                    : askedSubjectsByDay[observedDay - 1];
-
-                bool currentProfessorAsked =
-                    (askedSubjectsByDay[observedDay] & (1 << currentSubject)) != 0;
-
-                for (int hypothesisIndex = 0;
-                     hypothesisIndex < HypothesisCount;
-                     ++hypothesisIndex)
-                {
-                    int hypothesisBit = 1 << hypothesisIndex;
-
-                    if ((possibleHypotheses & hypothesisBit) == 0)
-                    {
-                        continue;
-                    }
-
-                    bool predictedQuestion = Predict(
-                        askedOnPreviousDay,
-                        SubjectsUsedByHypothesis[hypothesisIndex]);
-
-                    if (predictedQuestion != currentProfessorAsked)
-                    {
-                        possibleHypotheses &= ~hypothesisBit;
-                    }
-                }
-                if (possibleHypotheses == 0)
-                {
-                    break;
-                }
-            }
-
-            bool allPossibleRulesPredictNoQuestion = possibleHypotheses != 0;
-
-            if (allPossibleRulesPredictNoQuestion)
-            {
-                for (int hypothesisIndex = 0;
-                     hypothesisIndex < HypothesisCount;
-                     ++hypothesisIndex)
-                {
-                    int hypothesisBit = 1 << hypothesisIndex;
-
-                    if ((possibleHypotheses & hypothesisBit) != 0 &&
-                        Predict(
-                            askedYesterday,
-                            SubjectsUsedByHypothesis[hypothesisIndex]))
-                    {
-                        allPossibleRulesPredictNoQuestion = false;
-                        break;
-                    }
-                }
-            }
-
-            bool enoughObservations = currentDay >= MinimumObservationDays;
-
-            shouldAttend[currentSubject] =
-                !enoughObservations || !allPossibleRulesPredictNoQuestion;
-        }
-
-        return shouldAttend;
+        return result;
     }
 }
